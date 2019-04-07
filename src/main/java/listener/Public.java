@@ -10,6 +10,7 @@ import runnable.Task;
 import sendMessage.EmbedMessage;
 import server.discord.ServerDis;
 import server.squad.ServerSquad;
+import tests.TestMethod;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
@@ -41,7 +42,7 @@ public class Public extends ListenerAdapter {
                         () -> {
                             for (SignedServer server : new Database().getSignedServers()) {
                                 System.out.println(server.getServer_id());
-                                new EmbedMessage().ServerInfoTemplate(new Task().getServerInfo(String.valueOf(server.getServer_id())).getList(), data, Long.parseLong(BotConfig.TESTCHANNEL_ID));
+                                data.getChannel().sendMessage(new EmbedMessage().ServerInfoTemplate(new Task().getServerInfo(String.valueOf(server.getServer_id())).getList()).build()).queue();
                             }
                         }
                     ).start();
@@ -61,6 +62,13 @@ public class Public extends ListenerAdapter {
             // daemon and non-daemon threads.
             int threadCount = bean.getThreadCount();
             data.getChannel().sendMessage("Thread Count = " + threadCount).queue();
+            return;
         }
+
+        if(data.getContent().equals("?test2"))
+            new TestMethod(data).createTestMessage(BotConfig.TESTCHANNEL_ID);
+
+        if(data.getContent().startsWith("!дел "))
+            new TestMethod(data).deleteMessages();
     }
 }

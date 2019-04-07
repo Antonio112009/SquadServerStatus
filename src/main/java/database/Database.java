@@ -52,6 +52,25 @@ public class Database {
         }
     }
 
+    public int updateMessageServer(long discord_id, long server_id, long message_id){
+        try {
+            connection = DatabaseConnection.getConnection();
+            preparedStatement = connection.prepareStatement("UPDATE signed_servers SET message_id = ? WHERE server_id = ? and guild_id = ?");
+
+            preparedStatement.setLong(1, message_id);
+            preparedStatement.setLong(2, server_id);
+            preparedStatement.setLong(3, discord_id);
+
+
+            return preparedStatement.executeUpdate();
+        } catch (Exception e){
+            e.printStackTrace();
+            return 0;
+        } finally {
+            closeDatabase();
+        }
+    }
+
     public List<DiscordServers> getDiscordServers(){
         return getDiscordServers("");
     }
@@ -105,6 +124,24 @@ public class Database {
             closeDatabase();
         }
         return list;
+    }
+
+    public long getChannelId(long discord_id) {
+        long answer = 0L;
+        try {
+            connection = DatabaseConnection.getConnection();
+            String query = "SELECT channel_id FROM discord_servers WHERE guild_id = " + discord_id;
+
+            preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next())
+                answer = resultSet.getLong("channel_id");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeDatabase();
+        }
+        return answer;
     }
 
     public int editDiscordServer(long guild_id, long channel_id){

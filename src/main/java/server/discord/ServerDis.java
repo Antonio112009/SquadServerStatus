@@ -25,7 +25,7 @@ public class ServerDis {
                 } catch (Exception e) {
                     reply += " which I cannot find at the moment. Please, make some edits";
                 }
-                data.getChannel().sendMessage(reply + "\n\nTo change chat - use command **?editserver**").queue();
+                data.getChannel().sendMessage(reply + "\n\nTo change chat - use command **?editchannel**").queue();
                 return;
             }
             dbAddServer();

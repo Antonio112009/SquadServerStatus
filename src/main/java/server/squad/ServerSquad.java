@@ -36,9 +36,18 @@ public class ServerSquad {
                                         embedText.append("**").append(serverInfo.getServerName()).append("**\n");
                                         embedText.append("\u2705 Server [").append(serverInfo.getServerId()).append("](https://api.battlemetrics.com/servers/").append(serverInfo.getServerId()).append(") - this server successfully assigned to the bot\n\n");
                                         database.insertNewSignedServer(data.getGuild().getIdLong(), Long.parseLong(serverInfo.getServerId()));
+
+                                        long channel_id = database.getChannelId(data.getGuild().getIdLong());
+                                        ServerInfo finalServerInfo = serverInfo;
+                                        ServerInfo finalServerInfo1 = serverInfo;
+                                        data.getGuild().getTextChannelById(channel_id).sendMessage(new EmbedMessage().EmptyEmbed().build()).queue(
+                                                (e) ->{
+                                                    data.getGuild().getTextChannelById(channel_id).editMessageById(e.getId(), new EmbedMessage().ServerInfoTemplate(finalServerInfo1.getList()).build()).queue();
+                                                    new Database().updateMessageServer(data.getGuild().getIdLong(),Long.parseLong(finalServerInfo.getServerId()), e.getIdLong());
+                                                });
                                     } else {
                                         //server already exists
-                                        embedText.append("\u26A0 Server [").append(serverInfo.getServerId()).append("](https://api.battlemetrics.com/servers/").append(serverInfo.getServerId()).append(") - this server already assigned to the bot \n");
+                                        embedText.append("\u26A0 Server [").append(serverInfo.getServerId()).append("](https://api.battlemetrics.com/servers/").append(serverInfo.getServerId()).append(") - this server already assigned to the bot \n\n");
 
                                     }
                                 } else {
