@@ -6,6 +6,7 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
+import runnable.Threads;
 
 public class Launch {
 
@@ -21,6 +22,7 @@ public class Launch {
                     .setAutoReconnect(true)
                     .build();
             api.addEventListener(new Public());
+            new Threads(api).start();
 
         } catch (Exception e){
             e.printStackTrace();

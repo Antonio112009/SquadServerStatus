@@ -9,6 +9,7 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import runnable.Task;
 import sendMessage.EmbedMessage;
 import server.discord.ServerDis;
+import server.squad.BattleMetricsData;
 import server.squad.ServerSquad;
 import tests.TestMethod;
 
@@ -42,7 +43,7 @@ public class Public extends ListenerAdapter {
                         () -> {
                             for (SignedServer server : new Database().getSignedServers()) {
                                 System.out.println(server.getServer_id());
-                                data.getChannel().sendMessage(new EmbedMessage().ServerInfoTemplate(new Task().getServerInfo(String.valueOf(server.getServer_id())).getList()).build()).queue();
+                                data.getChannel().sendMessage(new EmbedMessage().ServerInfoTemplate(new BattleMetricsData().getServerInfo(String.valueOf(server.getServer_id())).getList()).build()).queue();
                             }
                         }
                     ).start();

@@ -1,10 +1,8 @@
 package server.squad;
 
-import config.BotConfig;
 import database.Database;
 import entities.Data;
 import entities.ServerInfo;
-import runnable.Task;
 import sendMessage.EmbedMessage;
 
 public class ServerSquad {
@@ -30,14 +28,15 @@ public class ServerSquad {
                         for (int i = 0; i < arrayLine.length - 1; i++) {
                             System.out.println("i = " + i);
                             try {
-                                serverInfo = new Task().getServerInfo(arrayLine[i+1]);
+                                serverInfo = new BattleMetricsData().getServerInfo(arrayLine[i+1]);
                                 if (serverInfo.getGameName().equals("squad")){
                                     if(!database.checkSignedServer(data.getGuild().getIdLong(), Long.parseLong(serverInfo.getServerId()))) {
                                         embedText.append("**").append(serverInfo.getServerName()).append("**\n");
                                         embedText.append("\u2705 Server [").append(serverInfo.getServerId()).append("](https://api.battlemetrics.com/servers/").append(serverInfo.getServerId()).append(") - this server successfully assigned to the bot\n\n");
-                                        database.insertNewSignedServer(data.getGuild().getIdLong(), Long.parseLong(serverInfo.getServerId()));
 
                                         long channel_id = database.getChannelId(data.getGuild().getIdLong());
+                                        database.insertNewSignedServer(data.getGuild().getIdLong(), channel_id, Long.parseLong(serverInfo.getServerId()));
+
                                         ServerInfo finalServerInfo = serverInfo;
                                         ServerInfo finalServerInfo1 = serverInfo;
                                         data.getGuild().getTextChannelById(channel_id).sendMessage(new EmbedMessage().EmptyEmbed().build()).queue(

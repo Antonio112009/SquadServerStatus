@@ -34,13 +34,14 @@ public class Database {
         }
     }
 
-    public int insertNewSignedServer(long guild_id, long server_id){
+    public int insertNewSignedServer(long guild_id, long channel_id, long server_id){
         try {
             connection = DatabaseConnection.getConnection();
-            preparedStatement = connection.prepareStatement("INSERT INTO `signed_servers` (`guild_id`, `server_id`) VALUES (?,?)");
+            preparedStatement = connection.prepareStatement("INSERT INTO `signed_servers` (`guild_id`, `channel_id`, `server_id`) VALUES (?,?,?)");
 
             preparedStatement.setLong(1, guild_id);
-            preparedStatement.setLong(2, server_id);
+            preparedStatement.setLong(2, channel_id);
+            preparedStatement.setLong(3, server_id);
 
 
             return preparedStatement.executeUpdate();
@@ -116,6 +117,8 @@ public class Database {
                 SignedServer signedServer = new SignedServer();
                 signedServer.setGuild_id(resultSet.getLong("guild_id"));
                 signedServer.setServer_id(resultSet.getLong("server_id"));
+                signedServer.setChannel_id(resultSet.getLong("channel_id"));
+                signedServer.setMessage_id(resultSet.getLong("message_id"));
                 list.add(signedServer);
             }
         } catch (Exception e){
