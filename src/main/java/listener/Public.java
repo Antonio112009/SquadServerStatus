@@ -81,7 +81,7 @@ public class Public extends ListenerAdapter {
         }
 
         if(data.getContent().equals("?aboutss")){
-            data.getChannel().sendMessage(new EmbedMessage().aboutBot(data).build()).queue();
+            data.getChannel().sendMessage(new EmbedMessage().AboutBot(data).build()).queue();
         }
 
 
@@ -102,12 +102,22 @@ public class Public extends ListenerAdapter {
             return;
         }
 
-        if (data.getContent().startsWith("?addserver ")){
-            new ServerSquad(data).addNewServer();
+        if (data.getContent().equals("?servers") || data.getContent().equals("?server")){
+            new ServerSquad(data, database).showServersList();
             return;
         }
 
-        if(data.getContent().startsWith("?addrole list")){
+        if (data.getContent().startsWith("?addserver ")){
+            new ServerSquad(data, database).addNewServer();
+            return;
+        }
+
+        if(data.getContent().equals("?deleteserver")){
+            new ServerSquad(data, database).deleteServer();
+            return;
+        }
+
+        if(data.getContent().startsWith("?access")){
             new ServerDis(data).listRoles(database);
             return;
         }
@@ -116,8 +126,8 @@ public class Public extends ListenerAdapter {
             new ServerDis(data).addRole(database);
         }
 
-        if(data.getContent().equals("?servers")){
-            System.out.println("Show list of servers");
+        if(data.getContent().startsWith("?deleterole")){
+            new ServerDis(data).deleteRole(database);
         }
 
 
@@ -173,7 +183,7 @@ public class Public extends ListenerAdapter {
             event.getJDA().getPresence().setStatus(OnlineStatus.ONLINE);
         }
 
-        if(data.getContent().startsWith("!дел "))
+        if(data.getContent().startsWith("?дел "))
             new TestMethod(data).deleteMessages();
     }
 

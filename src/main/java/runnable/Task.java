@@ -12,13 +12,14 @@ import java.util.List;
 public class Task {
 
     private JDA api;
+    private Database  database;
 
-    public Task(JDA api) {
+    public Task(JDA api, Database database) {
         this.api = api;
+        this.database = database;
     }
 
     void UpdateMessages(){
-        Database database = new Database();
         List<SignedServer> serversList = database.getSignedServers();
         for(SignedServer server : serversList){
             new Thread(

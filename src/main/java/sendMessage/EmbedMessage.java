@@ -1,5 +1,6 @@
 package sendMessage;
 
+import config.BotConfig;
 import entities.Data;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
@@ -12,7 +13,24 @@ public class EmbedMessage {
     private EmbedBuilder embed = new EmbedBuilder();
 
     public EmbedBuilder ServerInfoTemplate(List<String> serverInfo){
-        embed.setColor(new Color(124,252,0));
+        if(serverInfo.get(2).equals("0")){
+            embed.setColor(new Color(255,255,255));
+        } else{
+            System.out.println("number = " + serverInfo.get(2) + " number = " + serverInfo.get(1));
+            double percent = (Double.parseDouble(serverInfo.get(2)) / Double.parseDouble(serverInfo.get(1))) * 100;
+            System.out.println("percent = " + percent);
+            if(0 <= percent && percent < 12){
+                embed.setColor(new Color(204, 204, 204));
+            } else if(12 <= percent && percent < 50){
+                embed.setColor(new Color(170, 255, 253));
+            } else if(50 <= percent && percent <= 70){
+                embed.setColor(new Color(63, 255, 0));
+            } else if(70 <= percent && percent <= 80){
+                embed.setColor(new Color(255, 170, 0));
+            } else {
+                embed.setColor(new Color(255, 0, 0));
+            }
+        }
         if(serverInfo.get(4).startsWith("Fool's Road AAS v4"))
             embed.setThumbnail("http://m.ahod.si/maps/thumbnails/Fools_Road_AAS_v4.jpg");
         else
@@ -48,13 +66,13 @@ public class EmbedMessage {
     }
 
 
-    public EmbedBuilder aboutBot(Data data){
+    public EmbedBuilder AboutBot(Data data){
         JDA api = data.getGuild().getJDA();
         embed.setTitle(api.getSelfUser().getName());
         embed.setDescription("" +
                 "Hi! I am " + api.getSelfUser().getName() + ", a bot build by [Tony Anglichanin](https://github.com/Antonio112009)!\n" +
                 "I'm written in Java, using [JDA library](https://github.com/DV8FromTheWorld/JDA) (3.8.3_462)\n" +
-                "For additional help - contact **" + api.getUserById(389016583076446218L).getAsTag() + "**\n");
+                "For additional help - contact **" + api.getUserById(BotConfig.SPECIAL_ID).getAsTag() + "**\n");
         embed.addField("General Statistics",
                 "Servers: **" + api.getGuilds().size() + "**\n"
 

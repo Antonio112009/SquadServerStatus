@@ -238,6 +238,40 @@ public class Database {
         }
     }
 
+    public int deleteServer(long guild_id, long server_id){
+        try {
+            connection = DatabaseConnection.getConnection();
+            String query = "DELETE FROM signed_servers WHERE guild_id = ? AND server_id = ?";
+
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setLong(1, guild_id);
+            preparedStatement.setLong(2, server_id);
+            return preparedStatement.executeUpdate();
+        } catch (Exception e){
+            e.printStackTrace();
+            return 0;
+        } finally {
+            closeDatabase();
+        }
+    }
+
+    public int deleteRole(long role_id){
+        try {
+            connection = DatabaseConnection.getConnection();
+            String query = "DELETE FROM authorised_roles WHERE role_id = ?";
+
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setLong(1, role_id);
+
+            return preparedStatement.executeUpdate();
+        } catch (Exception e){
+            e.printStackTrace();
+            return 0;
+        } finally {
+            closeDatabase();
+        }
+    }
+
     private void closeDatabase() {
         if (connection != null) try { connection.close(); } catch (SQLException e) {e.printStackTrace();}
         if (preparedStatement != null) try { preparedStatement.close(); } catch (SQLException e) {e.printStackTrace();}

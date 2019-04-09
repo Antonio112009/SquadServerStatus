@@ -103,6 +103,20 @@ public class ServerDis {
         data.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo(text).build()).queue();
     }
 
+    public void deleteRole(Database database) {
+        if(data.isRoleMentioned()){
+            for(Role role : data.getMessage().getMentionedRoles()){
+                database.deleteRole(role.getIdLong());
+            }
+            data.getChannel().sendMessage("Successfully deleted mentioned roles!").queue();
+        } else {
+            data.getChannel().sendMessage("You forgot to mention roles").queue();
+        }
+
+    }
+
+
+
     public void sendHelp(){
         String text = "" +
                 "**List of commands:**\n" +
@@ -120,7 +134,7 @@ public class ServerDis {
                 "Example: `?addserver 3272036` or `?addserver 3272036 2125740`\n" +
                 "\n" +
                 "**Role manipulations:**\n" +
-                "`?addrole list` - show list of roles who has permission to the bot besides users tih `MANAGE SERVER` permission\n" +
+                "`?access` - show list of roles who has permission to the bot besides users tih `MANAGE SERVER` permission\n" +
                 "`?addrole @ROLE1 @ROLE2 .. @ROLE` - add role/roles that can manage bot\n" +
                 "\n" +
                 "For additional help, contact **Tony Anglichanin#3069**";

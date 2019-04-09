@@ -3,16 +3,19 @@ package server.squad;
 import database.Database;
 import entities.Data;
 import entities.ServerInfo;
+import entities.SignedServer;
 import sendMessage.EmbedMessage;
+
+import java.util.List;
 
 public class ServerSquad {
 
     private Data data;
     private Database database;
 
-    public ServerSquad(Data data) {
+    public ServerSquad(Data data, Database database) {
         this.data = data;
-        database = new Database();
+        this.database = database;
     }
 
     public void addNewServer(){
@@ -60,6 +63,44 @@ public class ServerSquad {
                         new EmbedMessage().ServerInsertInfo(data, embedText.toString(), data.getChannel().getIdLong());
                     }
             ).start();
+        } else {
+            data.getChannel().sendMessage("You forgot to mention servers").queue();
+        }
+    }
+
+
+    public void showServersList() {
+        List<SignedServer> serverList = database.getSignedServers("WHERE guild_id = " + data.getGuild().getId());
+        new Thread(
+                () ->{
+                    StringBuilder text = new StringBuilder("" +
+                            "Servers connected to the bot:\n\n");
+                    for (SignedServer server : serverList){
+                        ServerInfo info = new BattleMetricsData().getServerInfo(String.valueOf(server.getServer_id()));
+                        text.append("ServerId: **").append(server.getServer_id()).append("**\n")
+                                .append("Name: **").append(info.getServerName()).append("**\n")
+                                .append("Status: **").append(info.getStatus()).append("**\n\n");
+                    }
+                    data.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo(text.toString()).build()).queue();
+                }
+        ).start();
+    }
+
+
+    public void deleteServer() {
+        String[] arrayList = data.getContent().split(" ");
+        if (arrayList.length > 1) {
+            for (String server_id : arrayList){
+                try {
+                    long server_id_long = Long.parseLong(server_id);
+                    SignedServer signedServer = database.getSignedServers("WHERE guild_id = " + data.getGuild().getId() + " AND server_id = " + server_id).get(0);
+                    data.getGuild().getTextChannelById(signedServer.getChannel_id()).deleteMessageById(signedServer.getMessage_id()).queue();
+                    database.deleteServer(data.getGuild().getIdLong(), server_id_long);
+                } catch (NumberFormatException e){
+                    //TODO: number format error
+                } catch (Exception ignore){}
+            }
+            data.getChannel().sendMessage("Bot successfully deleted channel").queue();
         } else {
             data.getChannel().sendMessage("You forgot to mention servers").queue();
         }
