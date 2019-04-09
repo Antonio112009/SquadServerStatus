@@ -52,7 +52,7 @@ public class ServerInfo {
     }
 
     public String getUrlConnection(){
-        return "steam://connect/" + data.getAsJsonObject("attributes").get("ip").getAsString() + ":" + data.getAsJsonObject("attributes").get("port").getAsString();
+        return "steam://connect/" + data.getAsJsonObject("attributes").get("ip").getAsString() + ":" + data.getAsJsonObject("attributes").get("portQuery").getAsString();
     }
 
     public List<String> getList(){
@@ -65,6 +65,7 @@ public class ServerInfo {
         list.add(getMode());
         list.add(getUrlConnection());
         list.add(getGameName());
+        list.add(getServerId());
 
         return list;
     }

@@ -10,7 +10,6 @@ import runnable.Threads;
 
 public class Launch {
 
-
     public static void main(String[] args) {
 
         try {
@@ -18,7 +17,7 @@ public class Launch {
             JDA api = new JDABuilder(AccountType.BOT)
                     .setToken(BotConfig.TOKEN)
                     .setStatus(OnlineStatus.ONLINE)
-                    .setGame(Game.watching("Type ?help"))
+                    .setGame(Game.watching("help ?helpSS"))
                     .setAutoReconnect(true)
                     .build();
             api.addEventListener(new Public());
@@ -29,3 +28,4 @@ public class Launch {
         }
     }
 }
+

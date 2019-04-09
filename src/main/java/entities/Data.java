@@ -12,9 +12,11 @@ public class Data {
     private GuildController controller;
     private String content;
     private MessageChannel channel;
+    private Message message;
     private Member member;
     private Member mentionedMember;
     private TextChannel mentionedChannel;
+    private Role mentionedRole;
     private String authorId;
     private String[] command;
     private String[] comment;
@@ -24,6 +26,7 @@ public class Data {
     private Role lanceRole;
     private boolean mentioned = true;
     private boolean chatMentioned = true;
+    private boolean roleMentioned = true;
 
     public Data(MessageReceivedEvent event) {
 
@@ -35,11 +38,13 @@ public class Data {
         this.command = content.split(" ");
         this.comment = content.split("\\+\\+");
         this.authorId = event.getAuthor().getId();
+        this.message = event.getMessage();
 
         this.lanceAudit = event.getGuild().getTextChannelsByName("lance_audit", true).get(0);
         this.lanceNews = event.getGuild().getTextChannelsByName("lance_news", true).get(0);
         this.lanceOfficer = event.getGuild().getTextChannelsByName("lance_officer", true).get(0);
         this.lanceRole = event.getGuild().getRolesByName("Lance", true).get(0);
+
         try {
             this.mentionedMember = event.getMessage().getMentionedMembers().get(0);
         } catch (Exception e){
@@ -50,6 +55,12 @@ public class Data {
             this.mentionedChannel = event.getMessage().getMentionedChannels().get(0);
         } catch (Exception e){
             chatMentioned = false;
+        }
+
+        try {
+            this.mentionedRole = event.getMessage().getMentionedRoles().get(0);
+        } catch (Exception e){
+            roleMentioned = false;
         }
     }
 }

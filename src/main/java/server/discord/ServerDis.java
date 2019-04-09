@@ -2,7 +2,10 @@ package server.discord;
 
 import database.Database;
 import entities.Data;
+import net.dv8tion.jda.core.entities.Role;
+import sendMessage.EmbedMessage;
 
+import java.util.List;
 
 
 public class ServerDis {
@@ -59,5 +62,68 @@ public class ServerDis {
             data.getChannel().sendMessage("Bot successfully assigned to channel!").queue();
         else
             data.getChannel().sendMessage("Bot failed to add data to database. WARNING: Internal error!").queue();
+    }
+
+    /*
+    Todo: add successfull event
+     */
+    public void addRole(Database database){
+        if(data.isRoleMentioned()){
+            List<Long> roles_id = database.getRoleId(data.getGuild().getIdLong());
+            for(Role role : data.getMessage().getMentionedRoles()) {
+                boolean exists = false;
+                for (long role_id : roles_id){
+                    if(role_id == role.getIdLong())
+                        exists = true;
+                }
+
+                if(exists) {
+                    data.getChannel().sendMessage("role " + role.getName() + " already added to the bot").queue();
+                } else {
+                    database.insertNewAuthorisedRoles(data.getGuild().getIdLong(), role.getIdLong());
+                    data.getChannel().sendMessage("role " + role.getName() + " successfully added to the bot").queue();
+                }
+
+            }
+        } else {
+            data.getChannel().sendMessage("You forgot to mention roles").queue();
+        }
+    }
+
+    public void listRoles(Database database){
+        String text = "Here's a list who has access to the bot:\n" +
+                "\n" +
+                "All members with Permission `MANAGE SERVER`\n";
+        for(long role_id : database.getRoleId(data.getGuild().getIdLong())){
+            text += "Member with role - **" + data.getGuild().getRoleById(role_id).getName() + "**\n";
+        }
+
+        text += "\nTo add more roles - use command `?addrole`\n" +
+                "To delete access to the bot - `?deleterole`";
+        data.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo(text).build()).queue();
+    }
+
+    public void sendHelp(){
+        String text = "" +
+                "**List of commands:**\n" +
+                "\n" +
+                "**General:**\n" +
+                "`?helpSS` - see list of commands\n" +
+                "`?aboutSS` - see info about bot\n" +
+                "\n" +
+                "**Channel manipulations:**\n" +
+                "`?addchannel #CHANNEL` - assign channel to the bot to post servers' status\n" +
+                "`?editchannel #CHANNEL` - override already assigned channel to the bot\n" +
+                "\n" +
+                "**Servers manipulations:**\n" +
+                "`?addserver server1 server2 .. serverN` - assign server/servers to the bot\n" +
+                "Example: `?addserver 3272036` or `?addserver 3272036 2125740`\n" +
+                "\n" +
+                "**Role manipulations:**\n" +
+                "`?addrole list` - show list of roles who has permission to the bot besides users tih `MANAGE SERVER` permission\n" +
+                "`?addrole @ROLE1 @ROLE2 .. @ROLE` - add role/roles that can manage bot\n" +
+                "\n" +
+                "For additional help, contact **Tony Anglichanin#3069**";
+        data.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo(text).build()).queue();
     }
 }

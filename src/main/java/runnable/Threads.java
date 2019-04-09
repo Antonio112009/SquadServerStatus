@@ -20,6 +20,7 @@ public class Threads {
         task = new Task(api);
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(6);
         executorService.scheduleAtFixedRate(task::UpdateMessages, 0, 1, TimeUnit.MINUTES);
+        executorService.scheduleAtFixedRate(task::StatusUpdate, 0, 30, TimeUnit.SECONDS);
 
 
     }

@@ -10,8 +10,6 @@ import java.util.List;
 public class Database {
 
     private Connection connection;
-
-    private Statement statement;
     private PreparedStatement preparedStatement;
 
     public int insertNewServer(long guild_id, long channel_id, boolean active, String language){
@@ -42,6 +40,24 @@ public class Database {
             preparedStatement.setLong(1, guild_id);
             preparedStatement.setLong(2, channel_id);
             preparedStatement.setLong(3, server_id);
+
+
+            return preparedStatement.executeUpdate();
+        } catch (Exception e){
+            e.printStackTrace();
+            return 0;
+        } finally {
+            closeDatabase();
+        }
+    }
+
+    public int insertNewAuthorisedRoles(long guild_id, long role_id){
+        try {
+            connection = DatabaseConnection.getConnection();
+            preparedStatement = connection.prepareStatement("INSERT INTO `authorised_roles` (`guild_id`, `role_id`) VALUES (?,?)");
+
+            preparedStatement.setLong(1, guild_id);
+            preparedStatement.setLong(2, role_id);
 
 
             return preparedStatement.executeUpdate();
@@ -127,6 +143,25 @@ public class Database {
             closeDatabase();
         }
         return list;
+    }
+
+    public List<Long> getRoleId(long discord_id) {
+        List<Long> roles_id = new ArrayList<>();
+        try {
+            connection = DatabaseConnection.getConnection();
+            String query = "SELECT role_id FROM authorised_roles WHERE guild_id = " + discord_id;
+
+            preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                roles_id.add(resultSet.getLong("role_id"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeDatabase();
+        }
+        return roles_id;
     }
 
     public long getChannelId(long discord_id) {
