@@ -68,6 +68,42 @@ public class ServerSquad {
         }
     }
 
+    //Случайно удалил серв - надо восстановить
+    public void eraseServerMessages(){
+        List<SignedServer> arrayList = database.getSignedServers("WHERE guild_id = " + data.getGuild().getId());
+        long channel_id = database.getChannelId(data.getGuild().getIdLong());
+        data.getGuild().getTextChannelById(channel_id).getIterableHistory().takeAsync(100).thenAccept(data.getGuild().getTextChannelById(channel_id)::purgeMessages);
+
+        for (SignedServer server_id : arrayList){
+             ServerInfo serverInfo = new BattleMetricsData().getServerInfo(String.valueOf(server_id.getServer_id()));
+            data.getGuild().getTextChannelById(channel_id).sendMessage(new EmbedMessage().EmptyEmbed().build()).queue(
+                    (e) ->{
+                        data.getGuild().getTextChannelById(channel_id).editMessageById(e.getId(), new EmbedMessage().ServerInfoTemplate(serverInfo.getList()).build()).queue();
+                        new Database().updateMessageServer(data.getGuild().getIdLong(),Long.parseLong(serverInfo.getServerId()), e.getIdLong());
+                    });
+        }
+    }
+
+    public void deleteServer() {
+        String[] arrayList = data.getContent().split(" ");
+        if (arrayList.length > 1) {
+            for (String server_id : arrayList){
+                if(server_id.startsWith("?delete")) continue;
+                try {
+                    long server_id_long = Long.parseLong(server_id);
+                    SignedServer signedServer = database.getSignedServers("WHERE guild_id = " + data.getGuild().getId() + " AND server_id = " + server_id).get(0);
+                    data.getGuild().getTextChannelById(signedServer.getChannel_id()).deleteMessageById(signedServer.getMessage_id()).queue();
+                    database.deleteServer(data.getGuild().getIdLong(), server_id_long);
+                } catch (NumberFormatException e){
+                    //TODO: number format error
+                } catch (Exception ignore){
+                }
+            }
+            data.getChannel().sendMessage("Bot successfully deleted servers").queue();
+        } else {
+            data.getChannel().sendMessage("You forgot to mention servers").queue();
+        }
+    }
 
     public void showServersList() {
         List<SignedServer> serverList = database.getSignedServers("WHERE guild_id = " + data.getGuild().getId());
@@ -84,25 +120,5 @@ public class ServerSquad {
                     data.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo(text.toString()).build()).queue();
                 }
         ).start();
-    }
-
-
-    public void deleteServer() {
-        String[] arrayList = data.getContent().split(" ");
-        if (arrayList.length > 1) {
-            for (String server_id : arrayList){
-                try {
-                    long server_id_long = Long.parseLong(server_id);
-                    SignedServer signedServer = database.getSignedServers("WHERE guild_id = " + data.getGuild().getId() + " AND server_id = " + server_id).get(0);
-                    data.getGuild().getTextChannelById(signedServer.getChannel_id()).deleteMessageById(signedServer.getMessage_id()).queue();
-                    database.deleteServer(data.getGuild().getIdLong(), server_id_long);
-                } catch (NumberFormatException e){
-                    //TODO: number format error
-                } catch (Exception ignore){}
-            }
-            data.getChannel().sendMessage("Bot successfully deleted channel").queue();
-        } else {
-            data.getChannel().sendMessage("You forgot to mention servers").queue();
-        }
     }
 }

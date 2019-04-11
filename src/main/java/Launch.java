@@ -1,5 +1,6 @@
 
 import config.BotConfig;
+import listener.BotOperations;
 import listener.Public;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
@@ -21,6 +22,7 @@ public class Launch {
                     .setAutoReconnect(true)
                     .build();
             api.addEventListener(new Public());
+            api.addEventListener(new BotOperations());
             new Threads(api).start();
 
         } catch (Exception e){

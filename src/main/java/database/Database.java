@@ -272,6 +272,25 @@ public class Database {
         }
     }
 
+    //Возможно, мне и не нужно это
+//    public int eraseMessageId(long guild_id, long server_id){
+//        try {
+//            connection = DatabaseConnection.getConnection();
+//            preparedStatement = connection.prepareStatement("UPDATE signed_servers SET message_id = ? WHERE guild_id = ? and server_id = ?");
+//
+//            preparedStatement.setNull(1, Types.BIGINT);
+//            preparedStatement.setLong(2, guild_id);
+//            preparedStatement.setLong(3, server_id);
+//
+//            return preparedStatement.executeUpdate();
+//        } catch (Exception e){
+//            e.printStackTrace();
+//            return 0;
+//        } finally {
+//            closeDatabase();
+//        }
+//    }
+
     private void closeDatabase() {
         if (connection != null) try { connection.close(); } catch (SQLException e) {e.printStackTrace();}
         if (preparedStatement != null) try { preparedStatement.close(); } catch (SQLException e) {e.printStackTrace();}

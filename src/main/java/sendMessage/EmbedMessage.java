@@ -4,6 +4,7 @@ import config.BotConfig;
 import entities.Data;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 
 import java.awt.*;
 import java.time.Instant;
@@ -62,6 +63,17 @@ public class EmbedMessage {
         embed.setTitle("Server is unavailable");
         embed.setDescription("Status: doesn't exist");
         embed.setTimestamp(Instant.now());
+        return embed;
+    }
+
+    public EmbedBuilder onJoinDiscordServer(GuildJoinEvent event){
+        embed.setColor(new Color(63, 255, 0));
+        embed.setThumbnail(event.getGuild().getIconUrl());
+        embed.setTitle("Bot added to new discord server:");
+        embed.addField("Name of the server:",
+                event.getGuild().getName(),false);
+        embed.addField("Number of users:",
+                String.valueOf(event.getGuild().getMembers().size()), false);
         return embed;
     }
 
