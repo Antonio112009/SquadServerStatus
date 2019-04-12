@@ -39,10 +39,12 @@ public class Data {
         this.comment = content.split("\\+\\+");
         this.authorId = event.getAuthor().getId();
         this.message = event.getMessage();
-        this.lanceAudit = event.getGuild().getTextChannelsByName("lance_audit", true).get(0);
-        this.lanceNews = event.getGuild().getTextChannelsByName("lance_news", true).get(0);
-        this.lanceOfficer = event.getGuild().getTextChannelsByName("lance_officer", true).get(0);
-        this.lanceRole = event.getGuild().getRolesByName("Lance", true).get(0);
+        try {
+            this.lanceAudit = event.getGuild().getTextChannelsByName("lance_audit", true).get(0);
+            this.lanceNews = event.getGuild().getTextChannelsByName("lance_news", true).get(0);
+            this.lanceOfficer = event.getGuild().getTextChannelsByName("lance_officer", true).get(0);
+            this.lanceRole = event.getGuild().getRolesByName("Lance", true).get(0);
+        } catch (Exception ignore){}
 
         try {
             this.mentionedMember = event.getMessage().getMentionedMembers().get(0);

@@ -4,6 +4,7 @@ import config.BotConfig;
 import entities.Data;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 
 import java.awt.*;
@@ -12,14 +13,15 @@ import java.util.List;
 
 public class EmbedMessage {
     private EmbedBuilder embed = new EmbedBuilder();
+    private Color defaultColor = new Color(249, 29, 84);
 
     public EmbedBuilder ServerInfoTemplate(List<String> serverInfo){
         if(serverInfo.get(2).equals("0")){
             embed.setColor(new Color(255,255,255));
         } else{
-            System.out.println("number = " + serverInfo.get(2) + " number = " + serverInfo.get(1));
+//            System.out.println("number = " + serverInfo.get(2) + " number = " + serverInfo.get(1));
             double percent = (Double.parseDouble(serverInfo.get(2)) / Double.parseDouble(serverInfo.get(1))) * 100;
-            System.out.println("percent = " + percent);
+//            System.out.println("percent = " + percent);
             if(0 <= percent && percent < 12){
                 embed.setColor(new Color(204, 204, 204));
             } else if(12 <= percent && percent < 50){
@@ -47,13 +49,25 @@ public class EmbedMessage {
     }
 
     public void ServerInsertInfo(Data data, String text, long channel_id){
-        embed.setColor(new Color(0, 0, 100));
+        embed.setColor(defaultColor);
         embed.setDescription(text);
         data.getGuild().getTextChannelById(channel_id).sendMessage(embed.build()).queue();
     }
 
-    public EmbedBuilder ServerInsertInfo(String text){
-        embed.setColor(new Color(0, 0, 100));
+    public MessageEmbed ServerInsertInfo(String text){
+        return ServerInsertInfo(text, defaultColor).build();
+    }
+
+    public MessageEmbed ServerInsertInfo(String title, String text, Color color){
+        embed.setColor(color);
+        embed.setTitle(title);
+        embed.setDescription(text);
+        return embed.build();
+    }
+
+
+    public EmbedBuilder ServerInsertInfo(String text, Color color){
+        embed.setColor(color);
         embed.setDescription(text);
         return embed;
     }
@@ -81,9 +95,13 @@ public class EmbedMessage {
     public EmbedBuilder AboutBot(Data data){
         JDA api = data.getGuild().getJDA();
         embed.setTitle(api.getSelfUser().getName());
+        embed.setColor(defaultColor);
         embed.setDescription("" +
                 "Hi! I am " + api.getSelfUser().getName() + ", a bot build by [Tony Anglichanin](https://github.com/Antonio112009)!\n" +
-                "I'm written in Java, using [JDA library](https://github.com/DV8FromTheWorld/JDA) (3.8.3_462)\n" +
+                "I'm written in Java, using [JDA library](https://github.com/DV8FromTheWorld/JDA) (3.8.3_462) \n" +
+                "\n" +
+                "To add me to your server - [press this link](https://discordapp.com/oauth2/authorize?client_id=562952086438936586&scope=bot&permissions=8)\n" +
+                "\n" +
                 "For additional help - contact **" + api.getUserById(BotConfig.SPECIAL_ID).getAsTag() + "**\n");
         embed.addField("General Statistics",
                 "Servers: **" + api.getGuilds().size() + "**\n"
@@ -92,4 +110,12 @@ public class EmbedMessage {
 
         return embed;
     }
+//
+//    public void TestColor(Data data) {
+//        String[] array = data.getContent().split(" ");
+//        data.getChannel().sendMessage(ServerInsertInfo("TEST", new Color(Integer.parseInt(array[1]),Integer.parseInt(array[2]),Integer.parseInt(array[3]))).build()).queue();
+//    }
+
+
+    //TODO: Greeting message
 }

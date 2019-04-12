@@ -26,7 +26,7 @@ public class Task {
                     () -> {
                         if(server.getMessage_id() != 0){
                             try{
-                                System.out.println("guild = " + server.getGuild_id() + " channel_id = " + server.getChannel_id() + " Message = " +server.getMessage_id());
+//                                System.out.println("guild = " + server.getGuild_id() + " channel_id = " + server.getChannel_id() + " Message = " +server.getMessage_id());
                                 api.getGuildById(server.getGuild_id())
                                         .getTextChannelById(server.getChannel_id())
                                         .editMessageById(

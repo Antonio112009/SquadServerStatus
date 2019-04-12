@@ -14,5 +14,7 @@ public class BotOperations extends ListenerAdapter {
                 (channel) ->
                     channel.sendMessage(new EmbedMessage().onJoinDiscordServer(event).build()).queue()
         );
+
+//        event.getGuild().getDefaultChannel().sendMessage()
     }
 }

@@ -6,6 +6,7 @@ import entities.ServerInfo;
 import entities.SignedServer;
 import sendMessage.EmbedMessage;
 
+import java.awt.*;
 import java.util.List;
 
 public class ServerSquad {
@@ -24,20 +25,28 @@ public class ServerSquad {
         StringBuilder embedText = new StringBuilder();
         embedText.append("Results of adding servers to the bot:\n\n");
 
+        long channel_id = database.getChannelId(data.getGuild().getIdLong());
+        if(channel_id == 0){
+            data.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo("Error occurred","" +
+                    "You haven't assigned channel to the bot.\n" +
+                    "\n" +
+                    "To add channel - use `?addchannel` command", new Color(255, 170, 0))).queue();
+            return;
+        }
+
+
         if(arrayLine.length > 1){
             new Thread(
                     () ->{
                         ServerInfo serverInfo = null;
                         for (int i = 0; i < arrayLine.length - 1; i++) {
-                            System.out.println("i = " + i);
+//                            System.out.println("i = " + i);
                             try {
                                 serverInfo = new BattleMetricsData().getServerInfo(arrayLine[i+1]);
                                 if (serverInfo.getGameName().equals("squad")){
                                     if(!database.checkSignedServer(data.getGuild().getIdLong(), Long.parseLong(serverInfo.getServerId()))) {
                                         embedText.append("**").append(serverInfo.getServerName()).append("**\n");
                                         embedText.append("\u2705 Server [").append(serverInfo.getServerId()).append("](https://api.battlemetrics.com/servers/").append(serverInfo.getServerId()).append(") - this server successfully assigned to the bot\n\n");
-
-                                        long channel_id = database.getChannelId(data.getGuild().getIdLong());
                                         database.insertNewSignedServer(data.getGuild().getIdLong(), channel_id, Long.parseLong(serverInfo.getServerId()));
 
                                         ServerInfo finalServerInfo = serverInfo;
@@ -117,7 +126,7 @@ public class ServerSquad {
                                 .append("Name: **").append(info.getServerName()).append("**\n")
                                 .append("Status: **").append(info.getStatus()).append("**\n\n");
                     }
-                    data.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo(text.toString()).build()).queue();
+                    data.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo(text.toString())).queue();
                 }
         ).start();
     }

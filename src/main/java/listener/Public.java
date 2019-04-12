@@ -3,10 +3,7 @@ package listener;
 import config.BotConfig;
 import database.Database;
 import entities.Data;
-import entities.SignedServer;
-import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -32,27 +29,10 @@ public class Public extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent event) {
         data = new Data(event);
 
-        if(event.getAuthor().isBot()) return;
-
-        if(data.getContent().equals("?info1")){
-            for(Role role : data.getMember().getRoles()){
-                System.out.println("Role = " + role.getName() + " id = " + role.getId());
-            }
+        if(data.getContent().equals("?aboutss")){
+            data.getChannel().sendMessage(new EmbedMessage().AboutBot(data).build()).queue();
+            return;
         }
-
-
-//        For lance
-        if(data.getContent().equals("?lance")){
-            data.getMessage().delete().queue();
-            if(event.getMember().getRoles().contains(data.getGuild().getRoleById(BotConfig.ROLE_ID)) &&
-                (event.getMessage().getCategory().getName().toLowerCase().equals("lance"))){
-                data.getChannel().sendMessage(new EmbedMessage().ServerInfoTemplate(new BattleMetricsData().getServerInfo(BotConfig.SERVER_ID).getList()).build()).queue(
-                        (message) -> message.delete().queueAfter(30, TimeUnit.SECONDS)
-                );
-            }
-        }
-
-
 
         if(data.getAuthorId().equals(BotConfig.SPECIAL_ID)){
             //      Access only for creator.
@@ -73,6 +53,7 @@ public class Public extends ListenerAdapter {
             }
 
             if(data.getContent().startsWith("?tr")){
+                data.getMessage().delete().queue();
                 // Get the managed bean for the thread system of the Java
                 // virtual machine.
                 ThreadMXBean bean = ManagementFactory.getThreadMXBean();
@@ -81,9 +62,16 @@ public class Public extends ListenerAdapter {
                 // daemon and non-daemon threads.
                 int threadCount = bean.getThreadCount();
                 data.getChannel().sendMessage("Thread Count = " + threadCount).queue(
-                        (message) -> message.delete().queueAfter(10, TimeUnit.SECONDS)
+                        (message) -> message.delete().queueAfter(5, TimeUnit.SECONDS)
                 );
                 return;
+            }
+
+            if(data.getContent().equals("?info1")){
+                data.getMessage().delete().queue();
+                for(Role role : data.getMember().getRoles()){
+                    System.out.println("Role = " + role.getName() + " id = " + role.getId());
+                }
             }
 
 
@@ -92,6 +80,21 @@ public class Public extends ListenerAdapter {
              */
             if(data.getContent().startsWith("?дел "))
                 new TestMethod(data).deleteMessages();
+        }
+
+        if(event.getAuthor().isBot()) return;
+
+
+
+//        For lance
+        if(data.getContent().equals("?lance")){
+            data.getMessage().delete().queue();
+            if(event.getMember().getRoles().contains(data.getGuild().getRoleById(BotConfig.ROLE_ID)) &&
+                (event.getMessage().getCategory().getName().toLowerCase().equals("lance"))){
+                data.getChannel().sendMessage(new EmbedMessage().ServerInfoTemplate(new BattleMetricsData().getServerInfo(BotConfig.SERVER_ID).getList()).build()).queue(
+                        (message) -> message.delete().queueAfter(30, TimeUnit.SECONDS)
+                );
+            }
         }
 
 
@@ -104,17 +107,6 @@ public class Public extends ListenerAdapter {
             new ServerDis(data).sendHelp();
         }
 
-        if(data.getContent().equals("?aboutss")){
-            data.getChannel().sendMessage(new EmbedMessage().AboutBot(data).build()).queue();
-        }
-
-
-        if (data.getContent().equals("?info")){
-            for (Permission permission : data.getMember().getPermissions()){
-                if(permission.getName().equals("Manage Server"))
-                    System.out.println(permission.getName());
-            }
-        }
 
         if(data.getContent().startsWith("?addchannel")){
             new ServerDis(data).addServer(database);
@@ -141,7 +133,7 @@ public class Public extends ListenerAdapter {
             return;
         }
 
-        if(data.getContent().startsWith("?deleteserver")){
+        if(data.getContent().startsWith("?deleteserver ")){
             new ServerSquad(data, database).deleteServer();
             return;
         }
@@ -158,6 +150,11 @@ public class Public extends ListenerAdapter {
         if(data.getContent().startsWith("?deleterole")){
             new ServerDis(data).deleteRole(database);
         }
+//
+//        if(data.getContent().startsWith("?test1")){
+//            new EmbedMessage().TestColor(data);
+//        }
+
     }
 
 
