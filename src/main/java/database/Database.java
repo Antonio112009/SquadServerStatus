@@ -201,6 +201,25 @@ public class Database {
         }
     }
 
+    public int editDiscordServerSigned(long guild_id, long channel_id){
+        try {
+            connection = DatabaseConnection.getConnection();
+            preparedStatement = connection.prepareStatement("UPDATE signed_servers SET " +
+                    "channel_id = ? WHERE guild_id = ?");
+
+            preparedStatement.setLong(1, channel_id);
+            preparedStatement.setLong(2, guild_id);
+
+
+            return preparedStatement.executeUpdate();
+        } catch (Exception e){
+            e.printStackTrace();
+            return 0;
+        } finally {
+            closeDatabase();
+        }
+    }
+
     public boolean checkDiscordServer(long discord_id){
         try {
             connection = DatabaseConnection.getConnection();

@@ -1,7 +1,7 @@
 package server.squad;
 
 import database.Database;
-import entities.Data;
+import entities.DataPublic;
 import entities.ServerInfo;
 import entities.SignedServer;
 import sendMessage.EmbedMessage;
@@ -11,23 +11,27 @@ import java.util.List;
 
 public class ServerSquad {
 
-    private Data data;
+    private Color success = new Color(0, 226, 30);
+    private Color error = new Color(255, 170, 0);
+    private Color defaultColor = new Color(249, 29, 84);
+
+    private DataPublic dataPublic;
     private Database database;
 
-    public ServerSquad(Data data, Database database) {
-        this.data = data;
+    public ServerSquad(DataPublic dataPublic, Database database) {
+        this.dataPublic = dataPublic;
         this.database = database;
     }
 
     public void addNewServer(){
-        String[] arrayLine = data.getContent().split(" ");
+        String[] arrayLine = dataPublic.getContent().split(" ");
 
         StringBuilder embedText = new StringBuilder();
         embedText.append("Results of adding servers to the bot:\n\n");
 
-        long channel_id = database.getChannelId(data.getGuild().getIdLong());
+        long channel_id = database.getChannelId(dataPublic.getGuild().getIdLong());
         if(channel_id == 0){
-            data.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo("Error occurred","" +
+            dataPublic.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo("Error occurred","" +
                     "You haven't assigned channel to the bot.\n" +
                     "\n" +
                     "To add channel - use `?addchannel` command", new Color(255, 170, 0))).queue();
@@ -44,17 +48,17 @@ public class ServerSquad {
                             try {
                                 serverInfo = new BattleMetricsData().getServerInfo(arrayLine[i+1]);
                                 if (serverInfo.getGameName().equals("squad")){
-                                    if(!database.checkSignedServer(data.getGuild().getIdLong(), Long.parseLong(serverInfo.getServerId()))) {
+                                    if(!database.checkSignedServer(dataPublic.getGuild().getIdLong(), Long.parseLong(serverInfo.getServerId()))) {
                                         embedText.append("**").append(serverInfo.getServerName()).append("**\n");
                                         embedText.append("\u2705 Server [").append(serverInfo.getServerId()).append("](https://api.battlemetrics.com/servers/").append(serverInfo.getServerId()).append(") - this server successfully assigned to the bot\n\n");
-                                        database.insertNewSignedServer(data.getGuild().getIdLong(), channel_id, Long.parseLong(serverInfo.getServerId()));
+                                        database.insertNewSignedServer(dataPublic.getGuild().getIdLong(), channel_id, Long.parseLong(serverInfo.getServerId()));
 
                                         ServerInfo finalServerInfo = serverInfo;
                                         ServerInfo finalServerInfo1 = serverInfo;
-                                        data.getGuild().getTextChannelById(channel_id).sendMessage(new EmbedMessage().EmptyEmbed().build()).queue(
+                                        dataPublic.getGuild().getTextChannelById(channel_id).sendMessage(new EmbedMessage().EmptyEmbed().build()).queue(
                                                 (e) ->{
-                                                    data.getGuild().getTextChannelById(channel_id).editMessageById(e.getId(), new EmbedMessage().ServerInfoTemplate(finalServerInfo1.getList()).build()).queue();
-                                                    new Database().updateMessageServer(data.getGuild().getIdLong(),Long.parseLong(finalServerInfo.getServerId()), e.getIdLong());
+                                                    dataPublic.getGuild().getTextChannelById(channel_id).editMessageById(e.getId(), new EmbedMessage().ServerInfoTemplate(finalServerInfo1.getList()).build()).queue();
+                                                    new Database().updateMessageServer(dataPublic.getGuild().getIdLong(),Long.parseLong(finalServerInfo.getServerId()), e.getIdLong());
                                                 });
                                     } else {
                                         //server already exists
@@ -69,64 +73,72 @@ public class ServerSquad {
                                 embedText.append("\u274C Server [").append(arrayLine[i+1]).append("](https://en.wikipedia.org/wiki/HTTP_404) - this server cannot be added as it has incorrect input\n\n");
                             }
                         }
-                        new EmbedMessage().ServerInsertInfo(data, embedText.toString(), data.getChannel().getIdLong());
+                        new EmbedMessage().ServerInsertInfo(dataPublic, embedText.toString(), dataPublic.getChannel().getIdLong());
                     }
             ).start();
         } else {
-            data.getChannel().sendMessage("You forgot to mention servers").queue();
+            dataPublic.getChannel().sendMessage("You forgot to mention servers").queue();
         }
     }
 
     //Случайно удалил серв - надо восстановить
     public void eraseServerMessages(){
-        List<SignedServer> arrayList = database.getSignedServers("WHERE guild_id = " + data.getGuild().getId());
-        long channel_id = database.getChannelId(data.getGuild().getIdLong());
-        data.getGuild().getTextChannelById(channel_id).getIterableHistory().takeAsync(100).thenAccept(data.getGuild().getTextChannelById(channel_id)::purgeMessages);
+        List<SignedServer> arrayList = database.getSignedServers("WHERE guild_id = " + dataPublic.getGuild().getId());
+        long channel_id = database.getChannelId(dataPublic.getGuild().getIdLong());
+        dataPublic.getGuild().getTextChannelById(channel_id).getIterableHistory().takeAsync(100).thenAccept(dataPublic.getGuild().getTextChannelById(channel_id)::purgeMessages);
 
         for (SignedServer server_id : arrayList){
              ServerInfo serverInfo = new BattleMetricsData().getServerInfo(String.valueOf(server_id.getServer_id()));
-            data.getGuild().getTextChannelById(channel_id).sendMessage(new EmbedMessage().EmptyEmbed().build()).queue(
+            dataPublic.getGuild().getTextChannelById(channel_id).sendMessage(new EmbedMessage().EmptyEmbed().build()).queue(
                     (e) ->{
-                        data.getGuild().getTextChannelById(channel_id).editMessageById(e.getId(), new EmbedMessage().ServerInfoTemplate(serverInfo.getList()).build()).queue();
-                        new Database().updateMessageServer(data.getGuild().getIdLong(),Long.parseLong(serverInfo.getServerId()), e.getIdLong());
+                        dataPublic.getGuild().getTextChannelById(channel_id).editMessageById(e.getId(), new EmbedMessage().ServerInfoTemplate(serverInfo.getList()).build()).queue();
+                        new Database().updateMessageServer(dataPublic.getGuild().getIdLong(),Long.parseLong(serverInfo.getServerId()), e.getIdLong());
                     });
         }
     }
 
     public void deleteServer() {
-        String[] arrayList = data.getContent().split(" ");
+        String[] arrayList = dataPublic.getContent().split(" ");
         if (arrayList.length > 1) {
             for (String server_id : arrayList){
                 if(server_id.startsWith("?delete")) continue;
                 try {
                     long server_id_long = Long.parseLong(server_id);
-                    SignedServer signedServer = database.getSignedServers("WHERE guild_id = " + data.getGuild().getId() + " AND server_id = " + server_id).get(0);
-                    data.getGuild().getTextChannelById(signedServer.getChannel_id()).deleteMessageById(signedServer.getMessage_id()).queue();
-                    database.deleteServer(data.getGuild().getIdLong(), server_id_long);
+                    SignedServer signedServer = database.getSignedServers("WHERE guild_id = " + dataPublic.getGuild().getId() + " AND server_id = " + server_id).get(0);
+                    dataPublic.getGuild().getTextChannelById(signedServer.getChannel_id()).deleteMessageById(signedServer.getMessage_id()).queue();
+                    database.deleteServer(dataPublic.getGuild().getIdLong(), server_id_long);
                 } catch (NumberFormatException e){
                     //TODO: number format error
                 } catch (Exception ignore){
                 }
             }
-            data.getChannel().sendMessage("Bot successfully deleted servers").queue();
+            dataPublic.getChannel().sendMessage("Bot successfully deleted servers").queue();
         } else {
-            data.getChannel().sendMessage("You forgot to mention servers").queue();
+            dataPublic.getChannel().sendMessage("You forgot to mention servers").queue();
         }
     }
 
     public void showServersList() {
-        List<SignedServer> serverList = database.getSignedServers("WHERE guild_id = " + data.getGuild().getId());
+        List<SignedServer> serverList = database.getSignedServers("WHERE guild_id = " + dataPublic.getGuild().getId());
         new Thread(
                 () ->{
                     StringBuilder text = new StringBuilder("" +
                             "Servers connected to the bot:\n\n");
-                    for (SignedServer server : serverList){
-                        ServerInfo info = new BattleMetricsData().getServerInfo(String.valueOf(server.getServer_id()));
-                        text.append("ServerId: **").append(server.getServer_id()).append("**\n")
-                                .append("Name: **").append(info.getServerName()).append("**\n")
-                                .append("Status: **").append(info.getStatus()).append("**\n\n");
+                    if(serverList.size() == 0){
+                        dataPublic.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo("" +
+                                "Servers:", "" +
+                                "No server assigned to the bot\n" +
+                                "\n" +
+                                "To assign new server use command `?addserver`",error)).queue();
+                    } else {
+                        for (SignedServer server : serverList) {
+                            ServerInfo info = new BattleMetricsData().getServerInfo(String.valueOf(server.getServer_id()));
+                            text.append("ServerId: **").append(server.getServer_id()).append("**\n")
+                                    .append("Name: **").append(info.getServerName()).append("**\n")
+                                    .append("Status: **").append(info.getStatus()).append("**\n\n");
+                        }
+                        dataPublic.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo(text.toString())).queue();
                     }
-                    data.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo(text.toString())).queue();
                 }
         ).start();
     }

@@ -1,7 +1,7 @@
 package sendMessage;
 
 import config.BotConfig;
-import entities.Data;
+import entities.DataPublic;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.MessageEmbed;
@@ -48,10 +48,10 @@ public class EmbedMessage {
         return embed;
     }
 
-    public void ServerInsertInfo(Data data, String text, long channel_id){
+    public void ServerInsertInfo(DataPublic dataPublic, String text, long channel_id){
         embed.setColor(defaultColor);
         embed.setDescription(text);
-        data.getGuild().getTextChannelById(channel_id).sendMessage(embed.build()).queue();
+        dataPublic.getGuild().getTextChannelById(channel_id).sendMessage(embed.build()).queue();
     }
 
     public MessageEmbed ServerInsertInfo(String text){
@@ -92,8 +92,8 @@ public class EmbedMessage {
     }
 
 
-    public EmbedBuilder AboutBot(Data data){
-        JDA api = data.getGuild().getJDA();
+    public EmbedBuilder AboutBot(DataPublic dataPublic){
+        JDA api = dataPublic.getGuild().getJDA();
         embed.setTitle(api.getSelfUser().getName());
         embed.setColor(defaultColor);
         embed.setDescription("" +
@@ -111,7 +111,7 @@ public class EmbedMessage {
         return embed;
     }
 //
-//    public void TestColor(Data data) {
+//    public void TestColor(DataPublic data) {
 //        String[] array = data.getContent().split(" ");
 //        data.getChannel().sendMessage(ServerInsertInfo("TEST", new Color(Integer.parseInt(array[1]),Integer.parseInt(array[2]),Integer.parseInt(array[3]))).build()).queue();
 //    }

@@ -2,7 +2,7 @@ package listener;
 
 import config.BotConfig;
 import database.Database;
-import entities.Data;
+import entities.DataPublic;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -23,27 +23,32 @@ public class Public extends ListenerAdapter {
 
     Database database = new Database();
 
-    Data data;
+    DataPublic dataPublic;
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        data = new Data(event);
+        dataPublic = new DataPublic(event);
 
-        if(data.getContent().equals("?aboutss")){
-            data.getChannel().sendMessage(new EmbedMessage().AboutBot(data).build()).queue();
+        if(dataPublic.getContent().equals("?aboutss")){
+            dataPublic.getChannel().sendMessage(new EmbedMessage().AboutBot(dataPublic).build()).queue();
             return;
         }
 
-        if(data.getAuthorId().equals(BotConfig.SPECIAL_ID)){
+        if(dataPublic.getContent().equals("?creditss") || dataPublic.getContent().equals("?creditsss")){
+            new ServerDis(dataPublic).sendCredits();
+            return;
+        }
+
+        if(dataPublic.getAuthorId().equals(BotConfig.SPECIAL_ID)){
             //      Access only for creator.
 
             /*
             Close app in case of something anywhere where bot is added to channel
              */
 
-            if(data.getContent().equals("?exitss")){
-                data.getMessage().delete().queue();
-                data.getGuild().getJDA().getUserById(BotConfig.SPECIAL_ID).openPrivateChannel().queue(
+            if(dataPublic.getContent().equals("?exitss")){
+                dataPublic.getMessage().delete().queue();
+                dataPublic.getGuild().getJDA().getUserById(BotConfig.SPECIAL_ID).openPrivateChannel().queue(
                         (channel) -> {
                             channel.deleteMessageById(channel.getLatestMessageId()).queue();
                             channel.sendMessage("Bot successfully finished at " + Instant.now()).queue();
@@ -52,8 +57,8 @@ public class Public extends ListenerAdapter {
                 );
             }
 
-            if(data.getContent().startsWith("?tr")){
-                data.getMessage().delete().queue();
+            if(dataPublic.getContent().startsWith("?tr")){
+                dataPublic.getMessage().delete().queue();
                 // Get the managed bean for the thread system of the Java
                 // virtual machine.
                 ThreadMXBean bean = ManagementFactory.getThreadMXBean();
@@ -61,15 +66,15 @@ public class Public extends ListenerAdapter {
                 // Get the current number of live threads including both
                 // daemon and non-daemon threads.
                 int threadCount = bean.getThreadCount();
-                data.getChannel().sendMessage("Thread Count = " + threadCount).queue(
+                dataPublic.getChannel().sendMessage("Thread Count = " + threadCount).queue(
                         (message) -> message.delete().queueAfter(5, TimeUnit.SECONDS)
                 );
                 return;
             }
 
-            if(data.getContent().equals("?info1")){
-                data.getMessage().delete().queue();
-                for(Role role : data.getMember().getRoles()){
+            if(dataPublic.getContent().equals("?info1")){
+                dataPublic.getMessage().delete().queue();
+                for(Role role : dataPublic.getMember().getRoles()){
                     System.out.println("Role = " + role.getName() + " id = " + role.getId());
                 }
             }
@@ -78,8 +83,8 @@ public class Public extends ListenerAdapter {
             /*
             Should add this only for test server!
              */
-            if(data.getContent().startsWith("?дел "))
-                new TestMethod(data).deleteMessages();
+            if(dataPublic.getContent().startsWith("?дел "))
+                new TestMethod(dataPublic).deleteMessages();
         }
 
         if(event.getAuthor().isBot()) return;
@@ -87,11 +92,11 @@ public class Public extends ListenerAdapter {
 
 
 //        For lance
-        if(data.getContent().equals("?lance")){
-            data.getMessage().delete().queue();
-            if(event.getMember().getRoles().contains(data.getGuild().getRoleById(BotConfig.ROLE_ID)) &&
+        if(dataPublic.getContent().equals("?lance")){
+            dataPublic.getMessage().delete().queue();
+            if(event.getMember().getRoles().contains(dataPublic.getGuild().getRoleById(BotConfig.ROLE_ID)) &&
                 (event.getMessage().getCategory().getName().toLowerCase().equals("lance"))){
-                data.getChannel().sendMessage(new EmbedMessage().ServerInfoTemplate(new BattleMetricsData().getServerInfo(BotConfig.SERVER_ID).getList()).build()).queue(
+                dataPublic.getChannel().sendMessage(new EmbedMessage().ServerInfoTemplate(new BattleMetricsData().getServerInfo(BotConfig.SERVER_ID).getList()).build()).queue(
                         (message) -> message.delete().queueAfter(30, TimeUnit.SECONDS)
                 );
             }
@@ -101,71 +106,75 @@ public class Public extends ListenerAdapter {
 
 
 
-        if(!giveAccess(data)) return;
+        if(!giveAccess(dataPublic)) return;
 
-        if(data.getContent().equals("?helpss")){
-            new ServerDis(data).sendHelp();
+        if(dataPublic.getContent().equals("?helpss")){
+            new ServerDis(dataPublic).sendHelp();
         }
 
-
-        if(data.getContent().startsWith("?addchannel")){
-            new ServerDis(data).addServer(database);
+        if(dataPublic.getContent().equals("?channel")){
+            new ServerDis(dataPublic).showChannel(database);
             return;
         }
 
-        if(data.getContent().startsWith("?editchannel")){
-            new ServerDis(data).editServer(database);
+        if(dataPublic.getContent().startsWith("?addchannel")){
+            new ServerDis(dataPublic).addServer(database);
             return;
         }
 
-        if (data.getContent().equals("?servers") || data.getContent().equals("?server")){
-            new ServerSquad(data, database).showServersList();
+        if(dataPublic.getContent().startsWith("?editchannel")){
+            new ServerDis(dataPublic).editChannel(database);
             return;
         }
 
-        if (data.getContent().startsWith("?addserver ")){
-            new ServerSquad(data, database).addNewServer();
+        if (dataPublic.getContent().equals("?servers") || dataPublic.getContent().equals("?server")){
+            new ServerSquad(dataPublic, database).showServersList();
             return;
         }
 
-        if(data.getContent().startsWith("?clean")){
-            new ServerSquad(data, database).eraseServerMessages();
+        if (dataPublic.getContent().startsWith("?addserver ")){
+            new ServerSquad(dataPublic, database).addNewServer();
             return;
         }
 
-        if(data.getContent().startsWith("?deleteserver ")){
-            new ServerSquad(data, database).deleteServer();
+        if(dataPublic.getContent().startsWith("?clean")){
+            new ServerSquad(dataPublic, database).eraseServerMessages();
             return;
         }
 
-        if(data.getContent().startsWith("?access")){
-            new ServerDis(data).listRoles(database);
+        if(dataPublic.getContent().startsWith("?deleteserver ")){
+            new ServerSquad(dataPublic, database).deleteServer();
             return;
         }
 
-        if(data.getContent().startsWith("?addrole")){
-            new ServerDis(data).addRole(database);
+        if(dataPublic.getContent().startsWith("?access")){
+            new ServerDis(dataPublic).listRoles(database);
+            return;
         }
 
-        if(data.getContent().startsWith("?deleterole")){
-            new ServerDis(data).deleteRole(database);
+        if(dataPublic.getContent().startsWith("?addrole")){
+            new ServerDis(dataPublic).addRole(database);
+        }
+
+        if(dataPublic.getContent().startsWith("?deleterole")){
+            new ServerDis(dataPublic).deleteRole(database);
         }
 //
-//        if(data.getContent().startsWith("?test1")){
-//            new EmbedMessage().TestColor(data);
+//        if(dataPublic.getContent().startsWith("?test1")){
+//            new EmbedMessage().TestColor(dataPublic);
 //        }
 
     }
 
 
-    private boolean giveAccess(Data data){
-        for(Permission permission : data.getMember().getPermissions())
+    private boolean giveAccess(DataPublic dataPublic){
+        for(Permission permission : dataPublic.getMember().getPermissions())
             if (permission.getName().toLowerCase().equals("manage server"))
                 return true;
 
-        List<Long> roles_id = database.getRoleId(data.getGuild().getIdLong());
+        List<Long> roles_id = database.getRoleId(dataPublic.getGuild().getIdLong());
         for(long role_id : roles_id)
-            for(Role role : data.getMember().getRoles())
+            for(Role role : dataPublic.getMember().getRoles())
                 if (role_id == role.getIdLong())
                     return true;
 

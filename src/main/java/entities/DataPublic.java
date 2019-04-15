@@ -6,7 +6,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.managers.GuildController;
 
 @lombok.Data
-public class Data {
+public class DataPublic {
 
     private Guild guild;
     private GuildController controller;
@@ -28,8 +28,7 @@ public class Data {
     private boolean chatMentioned = true;
     private boolean roleMentioned = true;
 
-    public Data(MessageReceivedEvent event) {
-
+    public DataPublic(MessageReceivedEvent event) {
         this.guild = event.getGuild();
         this.controller = guild.getController();
         this.content = event.getMessage().getContentRaw().toLowerCase().replaceAll("\\s{2,}", " ").trim();
