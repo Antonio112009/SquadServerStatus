@@ -118,7 +118,7 @@ public class Public extends ListenerAdapter {
         }
 
         if(dataPublic.getContent().startsWith("?addchannel")){
-            new ServerDis(dataPublic).addServer(database);
+            new ServerDis(dataPublic).addChannel(database);
             return;
         }
 
@@ -132,7 +132,7 @@ public class Public extends ListenerAdapter {
             return;
         }
 
-        if (dataPublic.getContent().startsWith("?addserver ")){
+        if (dataPublic.getContent().startsWith("?addserver")){
             new ServerSquad(dataPublic, database).addNewServer();
             return;
         }
@@ -142,7 +142,7 @@ public class Public extends ListenerAdapter {
             return;
         }
 
-        if(dataPublic.getContent().startsWith("?deleteserver ")){
+        if(dataPublic.getContent().startsWith("?deleteserver")){
             new ServerSquad(dataPublic, database).deleteServer();
             return;
         }
@@ -159,10 +159,6 @@ public class Public extends ListenerAdapter {
         if(dataPublic.getContent().startsWith("?deleterole")){
             new ServerDis(dataPublic).deleteRole(database);
         }
-//
-//        if(dataPublic.getContent().startsWith("?test1")){
-//            new EmbedMessage().TestColor(dataPublic);
-//        }
 
     }
 

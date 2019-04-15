@@ -26,7 +26,7 @@ public class ServerDis {
     /*
     Добавляет чат сервера в БД
      */
-    public void addServer(Database database) {
+    public void addChannel(Database database) {
         if (dataPublic.isChatMentioned()) {
             if (database.checkDiscordServer(dataPublic.getGuild().getIdLong())) {
                 String reply = "You have already assigned bot to channel";
@@ -159,13 +159,14 @@ public class ServerDis {
         String text = "" +
                 "**General:**\n" +
                 "`?helpSS` - see list of commands\n" +
+                "`?guide` - see guide of bot installation" +
                 "`?aboutSS` - see info about bot\n" +
                 "`?credits` - see contributed to the project (in dev)\n" +
                 "\n" +
                 "**Only people who have `MANAGE SERVER` permission and/or added to the bot roles could use bot commands!**\n" +
                 "\n" +
                 "**Channel manipulations:**\n" +
-                "`?channel` - show assigned channel to the bot" +
+                "`?channel` - show assigned channel to the bot\n" +
                 "`?addchannel #CHANNEL` - assign channel to the bot to post servers' status\n" +
                 "`?editchannel #CHANNEL` - override already assigned channel to the bot\n" +
                 "\n" +

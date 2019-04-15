@@ -38,13 +38,12 @@ public class ServerSquad {
             return;
         }
 
-
+        System.out.println("array = " + arrayLine.length);
         if(arrayLine.length > 1){
             new Thread(
                     () ->{
                         ServerInfo serverInfo = null;
                         for (int i = 0; i < arrayLine.length - 1; i++) {
-//                            System.out.println("i = " + i);
                             try {
                                 serverInfo = new BattleMetricsData().getServerInfo(arrayLine[i+1]);
                                 if (serverInfo.getGameName().equals("squad")){
@@ -77,7 +76,10 @@ public class ServerSquad {
                     }
             ).start();
         } else {
-            dataPublic.getChannel().sendMessage("You forgot to mention servers").queue();
+            dataPublic.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo("" +
+                    "Error occurred","" +
+                    "You forgot to mention at least one server." +
+                    "", error)).queue();
         }
     }
 
