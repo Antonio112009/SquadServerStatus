@@ -29,7 +29,7 @@ public class Guide {
                 ":star2: **How to start using bot?**\n\n" +
                 ":one: - assign bot to channel using `?addchannel` command\n\n" +
                 ":two: - assign server(s) to the bot using `?addserver` command\n\n" +
-                ":three: - if assigned channel looks \"ugly\" - use `?clean` command to clean all messages and \"rewrite\" server(s) status\n\n" +
+                ":three: - if assigned channel looks \"ugly\" - use `?clean` command to delete all messages and \"rewrite\" server(s) status\n\n" +
                 "\n" +
                 ":star2: **Where to find server ID(s)?**\n" +
                 "Currently, bot is taking data from [battlemetrics](https://www.battlemetrics.com/servers/squad)\n\n" +

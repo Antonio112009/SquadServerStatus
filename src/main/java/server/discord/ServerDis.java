@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
+/*
+Everywhere embed message. Cool!
+ */
 public class ServerDis {
 
     private DataPublic dataPublic;
@@ -137,23 +140,22 @@ public class ServerDis {
                     (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
             );
         } else {
-            dataPublic.getChannel().sendMessage("You forgot to mention roles").queue(
+            dataPublic.getChannel().sendMessage(embed.ServerInsertInfo("Error occurred", "You forgot to mention roles", error)).queue(
                     (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
             );
         }
     }
 
     public void listRoles(Database database){
-        String text = "Here's a list who has access to the bot:\n" +
+        StringBuilder text = new StringBuilder("Here's a list who has access to the bot:\n" +
                 "\n" +
-                "All members with Permission **`MANAGE SERVER`**\n";
+                "All members with Permission **`MANAGE SERVER`**\n");
         for(long role_id : database.getRoleId(dataPublic.getGuild().getIdLong())){
-            text += "Member with role - **" + dataPublic.getGuild().getRoleById(role_id).getName() + "**\n";
+            text.append("Member with role - **").append(dataPublic.getGuild().getRoleById(role_id).getName()).append("**\n");
         }
 
-        text += "\nTo add more roles - use command `?addrole`\n" +
-                "To delete role - use command `?deleterole`";
-        dataPublic.getChannel().sendMessage(embed.ServerInsertInfo(text)).queue(
+        text.append("\nTo add more roles - use command `?addrole`\n" + "To delete role - use command `?deleterole`");
+        dataPublic.getChannel().sendMessage(embed.ServerInsertInfo(text.toString())).queue(
                 (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
         );
     }

@@ -10,6 +10,10 @@ import java.awt.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+
+/*
+I suppose heere everywhere is embed message
+ */
 public class ServerSquad {
 
     private Color success = new Color(0, 226, 30);
@@ -124,11 +128,11 @@ public class ServerSquad {
                 } catch (Exception ignore){
                 }
             }
-            dataPublic.getChannel().sendMessage("Bot successfully deleted servers").queue(
+            dataPublic.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo("Successful event", "Bot successfully deleted servers", success)).queue(
                     (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
             );
         } else {
-            dataPublic.getChannel().sendMessage("You forgot to mention servers").queue(
+            dataPublic.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo("Error occurred","You forgot to mention servers", error)).queue(
                     (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
             );
         }
