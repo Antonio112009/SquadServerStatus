@@ -9,13 +9,15 @@ import java.util.concurrent.TimeUnit;
 public class Guide {
 
     private DataPublic dataPublic;
+    private long seconds;
     private Color defaultColor = new Color(249, 29, 84);
 
-    public Guide(DataPublic dataPublic) {
+    public Guide(DataPublic dataPublic, long seconds) {
         this.dataPublic = dataPublic;
+        this.seconds = seconds;
     }
 
-    public void showGuide(long seconds){
+    public void showGuide(){
         String text = "" +
                 "\n" +
                 "**If you need help - use `?helpSS` command**\n" +
@@ -36,7 +38,7 @@ public class Guide {
                 ":three: **Get only numbers from the end of the URL.**\nIn our example it would be [3407280](https://www.battlemetrics.com/servers/squad/3407280)\n\n" +
                 ":four: Use `?addserver` command to add that server.\nExample: `?addserver 3407280`" +
                 "";
-        dataPublic.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo("Complete Guide (Self-destruct in 2 minute)", text, defaultColor)).queue(
+        dataPublic.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo("Complete Guide", text, defaultColor)).queue(
                 m -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
         );
     }

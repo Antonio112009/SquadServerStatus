@@ -14,16 +14,16 @@ import java.util.concurrent.TimeUnit;
 public class ServerDis {
 
     private DataPublic dataPublic;
+    private long seconds;
     private EmbedMessage embed = new EmbedMessage();
 
     private Color success = new Color(0, 226, 30);
     private Color error = new Color(255, 170, 0);
     private Color defaultColor = new Color(249, 29, 84);
 
-    private long seconds = 30;
-
-    public ServerDis(DataPublic dataPublic) {
+    public ServerDis(DataPublic dataPublic, long seconds) {
         this.dataPublic = dataPublic;
+        this.seconds = seconds;
     }
 
     /*
@@ -38,12 +38,16 @@ public class ServerDis {
                 } catch (Exception e) {
                     reply += " which I cannot find at the moment. Please, make some edits";
                 }
-                dataPublic.getChannel().sendMessage(embed.ServerInsertInfo(reply + "\n\nTo change chat - use command **?editchannel**")).queue();
+                dataPublic.getChannel().sendMessage(embed.ServerInsertInfo(reply + "\n\nTo change chat - use command **?editchannel**")).queue(
+                        (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+                );
                 return;
             }
             dbAddServer();
         } else {
-            dataPublic.getChannel().sendMessage(embed.ServerInsertInfo("Error occurred", "No channel mentioned", error)).queue();
+            dataPublic.getChannel().sendMessage(embed.ServerInsertInfo("Error occurred", "No channel mentioned", error)).queue(
+                    (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+            );
         }
     }
 
@@ -57,40 +61,54 @@ public class ServerDis {
                 result *= database.editDiscordServerSigned(dataPublic.getGuild().getIdLong(), dataPublic.getMentionedChannel().getIdLong());
                 System.out.println(result);
                 if(result != 0)
-                    dataPublic.getChannel().sendMessage(embed.ServerInsertInfo("Successful event", "Bot successfully changed assigned chat", success)).queue();
+                    dataPublic.getChannel().sendMessage(embed.ServerInsertInfo("Successful event", "Bot successfully changed assigned chat", success)).queue(
+                            (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+                    );
                 else
-                    dataPublic.getChannel().sendMessage(embed.ServerInsertInfo("Error occurred","Bot failed to change assigned chat", error)).queue();
+                    dataPublic.getChannel().sendMessage(embed.ServerInsertInfo("Error occurred","Bot failed to change assigned chat", error)).queue(
+                            (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+                    );
             } else {
                 dbAddServer();
             }
         } else {
-            dataPublic.getChannel().sendMessage(embed.ServerInsertInfo("Error occurred", "No channel mentioned", error)).queue();
+            dataPublic.getChannel().sendMessage(embed.ServerInsertInfo("Error occurred", "No channel mentioned", error)).queue(
+                    (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+            );
         }
     }
 
     private void dbAddServer() {
         int result = new Database().insertNewServer(dataPublic.getGuild().getIdLong(), dataPublic.getMentionedChannel().getIdLong(), true, "en");
         if (result == 1)
-            dataPublic.getChannel().sendMessage(embed.ServerInsertInfo("Successful event", "Bot successfully assigned to channel **" + dataPublic.getMentionedChannel().getName() + "** !", success)).queue();
+            dataPublic.getChannel().sendMessage(embed.ServerInsertInfo("Successful event", "Bot successfully assigned to channel **" + dataPublic.getMentionedChannel().getName() + "** !", success)).queue(
+                    (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+            );
         else
-            dataPublic.getChannel().sendMessage(embed.ServerInsertInfo("Error occurred", "Bot failed to add dataPublic to database. WARNING: Internal error!", error)).queue();
+            dataPublic.getChannel().sendMessage(embed.ServerInsertInfo("Error occurred", "Bot failed to add dataPublic to database. WARNING: Internal error!", error)).queue(
+                    (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+            );
     }
 
     public void showChannel(Database database){
         long channel_id = database.getChannelId(dataPublic.getGuild().getIdLong());
+        String text;
+        Color final_color;
         if(channel_id != 0){
-            dataPublic.getChannel().sendMessage(embed.ServerInsertInfo("Result:", "" +
-                    "Bot is assigned to channel **" + dataPublic.getGuild().getTextChannelById(channel_id).getName() + "**\n" +
+            text = "Bot is assigned to channel **" + dataPublic.getGuild().getTextChannelById(channel_id).getName() + "**\n" +
                     "\n" +
-                    "To change assigned channel to another one use command `?editchannel`" +
-                    "", success)).queue();
+                    "To change assigned channel to another one use command `?editchannel`";
+            final_color = success;
         } else {
-            dataPublic.getChannel().sendMessage(embed.ServerInsertInfo("Result:", "" +
-                    "Bot is not assigned to any channel!\n" +
+            text = "Bot is not assigned to any channel!\n" +
                     "\n" +
-                    "To assign bot to channel use command `?addchannel`" +
-                    "", error)).queue();
+                    "To assign bot to channel use command `?addchannel`";
+            final_color = error;
         }
+
+        dataPublic.getChannel().sendMessage(embed.ServerInsertInfo("Result:", text, final_color)).queue(
+                (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+        );
     }
 
     /*
@@ -115,9 +133,13 @@ public class ServerDis {
                     allText.append("\u2705  Role **").append(role.getName()).append("** successfully added to the bot\n\n");
                 }
             }
-            dataPublic.getChannel().sendMessage(embed.ServerInsertInfo("Result:", allText.toString(), defaultColor)).queue();
+            dataPublic.getChannel().sendMessage(embed.ServerInsertInfo("Result:", allText.toString(), defaultColor)).queue(
+                    (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+            );
         } else {
-            dataPublic.getChannel().sendMessage("You forgot to mention roles").queue();
+            dataPublic.getChannel().sendMessage("You forgot to mention roles").queue(
+                    (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+            );
         }
     }
 
@@ -131,7 +153,9 @@ public class ServerDis {
 
         text += "\nTo add more roles - use command `?addrole`\n" +
                 "To delete role - use command `?deleterole`";
-        dataPublic.getChannel().sendMessage(embed.ServerInsertInfo(text)).queue();
+        dataPublic.getChannel().sendMessage(embed.ServerInsertInfo(text)).queue(
+                (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+        );
     }
 
     /*
@@ -149,9 +173,13 @@ public class ServerDis {
                     text.append("\u274C Role **").append(role.getName()).append("** - does not exist in access list\n\n");
                 }
             }
-            dataPublic.getChannel().sendMessage(embed.ServerInsertInfo("Result:", text.toString(), success)).queue();
+            dataPublic.getChannel().sendMessage(embed.ServerInsertInfo("Result:", text.toString(), success)).queue(
+                    (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+            );
         } else {
-            dataPublic.getChannel().sendMessage( embed.ServerInsertInfo("Error occurred", "You forgot to mention roles", error)).queue();
+            dataPublic.getChannel().sendMessage( embed.ServerInsertInfo("Error occurred", "You forgot to mention roles", error)).queue(
+                    (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+            );
         }
 
     }
@@ -160,7 +188,9 @@ public class ServerDis {
 
     public void sendHelp(){
         String text = "" +
-                "**General:**\n" +
+                ":fire: **All commands and ouputs self-destroy after 2 minutes** :fire:\n" +
+                "\n" +
+                ":star2: **General:**\n" +
                 "`?helpSS` - see list of commands\n" +
                 "`?guide` - see guide of bot installation\n" +
                 "`?aboutSS` - see info about bot\n" +
@@ -168,12 +198,12 @@ public class ServerDis {
                 "\n" +
                 "**Only people who have `MANAGE SERVER` permission and/or added to the bot roles could use bot commands!**\n" +
                 "\n" +
-                "**Channel manipulations:**\n" +
+                ":star2: **Channel manipulations:**\n" +
                 "`?channel` - show assigned channel to the bot\n" +
                 "`?addchannel #CHANNEL` - assign channel to the bot to post servers' status\n" +
                 "`?editchannel #CHANNEL` - override already assigned channel to the bot\n" +
                 "\n" +
-                "**Servers manipulations:**\n" +
+                ":star2: **Servers manipulations:**\n" +
                 "`?servers` - list all servers assigned to the bot\n" +
                 "`?addserver server1 server2 .. serverN` - assign server/servers to the bot\n" +
                 "`?deleteserver server1 server2 .. serverN` - delete server/servers from the bot\n" +
@@ -181,7 +211,7 @@ public class ServerDis {
                 "\n" +
                 "Example: `?addserver 3272036` or `?addserver 3272036 2125740`\n" +
                 "\n" +
-                "**Role manipulations:**\n" +
+                ":star2: **Role manipulations:**\n" +
                 "`?access` - show list of roles who have access permission to the bot\n" +
                 "`?addrole @ROLE1 @ROLE2 .. @ROLE` - add role/roles that can manage bot\n" +
                 "`?deleterole @ROLE1 @ROLE2 .. @ROLE` - delete role/roles that can manage bot\n" +
@@ -202,7 +232,9 @@ public class ServerDis {
                 "[ProG]Aibo,\nVirus.exe,\n[BORN]Enj0y,\n508|CPL-Gerrit,\n508th|SPC-Llamageddon,\n508th|SGT-Ekberg,\nGatzby." +
                 "**";
 
-        dataPublic.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo("Credits:", text, defaultColor)).queue();
+        dataPublic.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo("Credits:", text, defaultColor)).queue(
+                (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+        );
     }
 
 

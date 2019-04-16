@@ -10,6 +10,7 @@ import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import java.awt.*;
 import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class EmbedMessage {
     private EmbedBuilder embed = new EmbedBuilder();
@@ -48,10 +49,12 @@ public class EmbedMessage {
         return embed;
     }
 
-    public void ServerInsertInfo(DataPublic dataPublic, String text, long channel_id){
+    public void ServerInsertInfo(DataPublic dataPublic, String text, long channel_id, long seconds){
         embed.setColor(defaultColor);
         embed.setDescription(text);
-        dataPublic.getGuild().getTextChannelById(channel_id).sendMessage(embed.build()).queue();
+        dataPublic.getGuild().getTextChannelById(channel_id).sendMessage(embed.build()).queue(
+                (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+        );
     }
 
     public MessageEmbed ServerInsertInfo(String text){

@@ -22,12 +22,11 @@ import java.util.concurrent.TimeUnit;
 
 public class Public extends ListenerAdapter {
 
-    Database database = new Database();
+    private Database database = new Database();
 
-    DataPublic dataPublic;
+    private DataPublic dataPublic;
 
-    long seconds = 30;
-
+    private long seconds = 20;
 
 
     @Override
@@ -36,18 +35,23 @@ public class Public extends ListenerAdapter {
 
         if(dataPublic.getContent().equals("?aboutss")){
             dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
-            dataPublic.getChannel().sendMessage(new EmbedMessage().AboutBot(dataPublic).build()).queue();
+            dataPublic.getChannel().sendMessage(new EmbedMessage().AboutBot(dataPublic).build()).queue(
+                    (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+            );
             return;
         }
 
         if(dataPublic.getContent().equals("?creditss") || dataPublic.getContent().equals("?creditsss") || dataPublic.getContent().equals("?credits") || dataPublic.getContent().equals("?credit")){
             dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
-            new ServerDis(dataPublic).sendCredits();
+            new ServerDis(dataPublic, seconds).sendCredits();
             return;
         }
 
+
+        /*
+        Only for developer
+         */
         if(dataPublic.getAuthorId().equals(BotConfig.SPECIAL_ID)){
-            //      Access only for creator.
 
             /*
             Close app in case of something anywhere where bot is added to channel
@@ -100,7 +104,6 @@ public class Public extends ListenerAdapter {
 
 //        For lance
         if(dataPublic.getContent().equals("?lance")){
-            dataPublic.getMessage().delete().queue();
             if(event.getMember().getRoles().contains(dataPublic.getGuild().getRoleById(BotConfig.ROLE_ID)) &&
                 (event.getMessage().getCategory().getName().toLowerCase().equals("lance"))){
                 dataPublic.getChannel().sendMessage(new EmbedMessage().ServerInfoTemplate(new BattleMetricsData().getServerInfo(BotConfig.SERVER_ID).getList()).build()).queue(
@@ -117,71 +120,71 @@ public class Public extends ListenerAdapter {
 
         if(dataPublic.getContent().equals("?helpss")){
             dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
-            new ServerDis(dataPublic).sendHelp();
+            new ServerDis(dataPublic, seconds).sendHelp();
         }
 
         if(dataPublic.getContent().equals("?guide") || dataPublic.getContent().equals("?guidess")){
             dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
-            new Guide(dataPublic).showGuide(seconds);
+            new Guide(dataPublic, seconds).showGuide();
             return;
         }
 
         if(dataPublic.getContent().equals("?channel")){
             dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
-            new ServerDis(dataPublic).showChannel(database);
+            new ServerDis(dataPublic, seconds).showChannel(database);
             return;
         }
 
         if(dataPublic.getContent().startsWith("?addchannel")){
             dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
-            new ServerDis(dataPublic).addChannel(database);
+            new ServerDis(dataPublic, seconds).addChannel(database);
             return;
         }
 
         if(dataPublic.getContent().startsWith("?editchannel")){
             dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
-            new ServerDis(dataPublic).editChannel(database);
+            new ServerDis(dataPublic, seconds).editChannel(database);
             return;
         }
 
         if (dataPublic.getContent().equals("?servers") || dataPublic.getContent().equals("?server")){
             dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
-            new ServerSquad(dataPublic, database).showServersList();
+            new ServerSquad(dataPublic, database, seconds).showServersList();
             return;
         }
 
         if (dataPublic.getContent().startsWith("?addserver")){
             dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
-            new ServerSquad(dataPublic, database).addNewServer();
+            new ServerSquad(dataPublic, database, seconds).addNewServer();
             return;
         }
 
         if(dataPublic.getContent().startsWith("?clean")){
             dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
-            new ServerSquad(dataPublic, database).eraseServerMessages();
+            new ServerSquad(dataPublic, database,seconds).eraseServerMessages();
             return;
         }
 
         if(dataPublic.getContent().startsWith("?deleteserver")){
             dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
-            new ServerSquad(dataPublic, database).deleteServer();
+            new ServerSquad(dataPublic, database, seconds).deleteServer();
             return;
         }
 
         if(dataPublic.getContent().startsWith("?access")){
             dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
-            new ServerDis(dataPublic).listRoles(database);
+            new ServerDis(dataPublic, seconds).listRoles(database);
             return;
         }
 
         if(dataPublic.getContent().startsWith("?addrole")){
             dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
-            new ServerDis(dataPublic).addRole(database);
+            new ServerDis(dataPublic, seconds).addRole(database);
         }
 
         if(dataPublic.getContent().startsWith("?deleterole")){
             dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
-            new ServerDis(dataPublic).deleteRole(database);
+            new ServerDis(dataPublic, seconds).deleteRole(database);
         }
 
     }

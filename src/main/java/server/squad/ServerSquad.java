@@ -8,6 +8,7 @@ import sendMessage.EmbedMessage;
 
 import java.awt.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class ServerSquad {
 
@@ -17,10 +18,12 @@ public class ServerSquad {
 
     private DataPublic dataPublic;
     private Database database;
+    private long seconds;
 
-    public ServerSquad(DataPublic dataPublic, Database database) {
+    public ServerSquad(DataPublic dataPublic, Database database, long seconds) {
         this.dataPublic = dataPublic;
         this.database = database;
+        this.seconds = seconds;
     }
 
     public void addNewServer(){
@@ -34,7 +37,9 @@ public class ServerSquad {
             dataPublic.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo("Error occurred","" +
                     "You haven't assigned channel to the bot.\n" +
                     "\n" +
-                    "To add channel - use `?addchannel` command", new Color(255, 170, 0))).queue();
+                    "To add channel - use `?addchannel` command", new Color(255, 170, 0))).queue(
+                    (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+            );
             return;
         }
 
@@ -72,14 +77,16 @@ public class ServerSquad {
                                 embedText.append("\u274C Server [").append(arrayLine[i+1]).append("](https://en.wikipedia.org/wiki/HTTP_404) - this server cannot be added as it has incorrect input\n\n");
                             }
                         }
-                        new EmbedMessage().ServerInsertInfo(dataPublic, embedText.toString(), dataPublic.getChannel().getIdLong());
+                        new EmbedMessage().ServerInsertInfo(dataPublic, embedText.toString(), dataPublic.getChannel().getIdLong(), seconds);
                     }
             ).start();
         } else {
             dataPublic.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo("" +
                     "Error occurred","" +
                     "You forgot to mention at least one server." +
-                    "", error)).queue();
+                    "", error)).queue(
+                    (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+            );
         }
     }
 
@@ -99,6 +106,9 @@ public class ServerSquad {
         }
     }
 
+    /*
+    TODO: add beauty here!!!
+     */
     public void deleteServer() {
         String[] arrayList = dataPublic.getContent().split(" ");
         if (arrayList.length > 1) {
@@ -114,9 +124,13 @@ public class ServerSquad {
                 } catch (Exception ignore){
                 }
             }
-            dataPublic.getChannel().sendMessage("Bot successfully deleted servers").queue();
+            dataPublic.getChannel().sendMessage("Bot successfully deleted servers").queue(
+                    (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+            );
         } else {
-            dataPublic.getChannel().sendMessage("You forgot to mention servers").queue();
+            dataPublic.getChannel().sendMessage("You forgot to mention servers").queue(
+                    (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+            );
         }
     }
 
@@ -139,7 +153,9 @@ public class ServerSquad {
                                     .append("Name: **").append(info.getServerName()).append("**\n")
                                     .append("Status: **").append(info.getStatus()).append("**\n\n");
                         }
-                        dataPublic.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo(text.toString())).queue();
+                        dataPublic.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo(text.toString())).queue(
+                                (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+                        );
                     }
                 }
         ).start();
