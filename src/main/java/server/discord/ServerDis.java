@@ -8,6 +8,7 @@ import sendMessage.EmbedMessage;
 
 import java.awt.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 public class ServerDis {
@@ -18,6 +19,8 @@ public class ServerDis {
     private Color success = new Color(0, 226, 30);
     private Color error = new Color(255, 170, 0);
     private Color defaultColor = new Color(249, 29, 84);
+
+    private long seconds = 30;
 
     public ServerDis(DataPublic dataPublic) {
         this.dataPublic = dataPublic;
@@ -159,7 +162,7 @@ public class ServerDis {
         String text = "" +
                 "**General:**\n" +
                 "`?helpSS` - see list of commands\n" +
-                "`?guide` - see guide of bot installation" +
+                "`?guide` - see guide of bot installation\n" +
                 "`?aboutSS` - see info about bot\n" +
                 "`?credits` - see contributed to the project (in dev)\n" +
                 "\n" +
@@ -186,7 +189,9 @@ public class ServerDis {
                 "Example: `?addrole @admin` or `?addrole @admin @moderator`\n" +
                 "\n" +
                 "For additional help - contact **" + dataPublic.getGuild().getJDA().getUserById(BotConfig.SPECIAL_ID).getAsTag() + "**\n";
-        dataPublic.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo("List of the commands:", text, defaultColor)).queue();
+        dataPublic.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo("List of the commands:", text, defaultColor)).queue(
+                (m) -> m.delete().queueAfter(seconds, TimeUnit.SECONDS)
+        );
     }
 
 

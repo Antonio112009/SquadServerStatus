@@ -8,6 +8,7 @@ import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import sendMessage.EmbedMessage;
+import server.discord.Guide;
 import server.discord.ServerDis;
 import server.squad.BattleMetricsData;
 import server.squad.ServerSquad;
@@ -25,16 +26,22 @@ public class Public extends ListenerAdapter {
 
     DataPublic dataPublic;
 
+    long seconds = 30;
+
+
+
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         dataPublic = new DataPublic(event);
 
         if(dataPublic.getContent().equals("?aboutss")){
+            dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
             dataPublic.getChannel().sendMessage(new EmbedMessage().AboutBot(dataPublic).build()).queue();
             return;
         }
 
-        if(dataPublic.getContent().equals("?creditss") || dataPublic.getContent().equals("?creditsss")){
+        if(dataPublic.getContent().equals("?creditss") || dataPublic.getContent().equals("?creditsss") || dataPublic.getContent().equals("?credits") || dataPublic.getContent().equals("?credit")){
+            dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
             new ServerDis(dataPublic).sendCredits();
             return;
         }
@@ -109,54 +116,71 @@ public class Public extends ListenerAdapter {
         if(!giveAccess(dataPublic)) return;
 
         if(dataPublic.getContent().equals("?helpss")){
+            dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
             new ServerDis(dataPublic).sendHelp();
         }
 
+        if(dataPublic.getContent().equals("?guide") || dataPublic.getContent().equals("?guidess")){
+            dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
+            new Guide(dataPublic).showGuide(seconds);
+            return;
+        }
+
         if(dataPublic.getContent().equals("?channel")){
+            dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
             new ServerDis(dataPublic).showChannel(database);
             return;
         }
 
         if(dataPublic.getContent().startsWith("?addchannel")){
+            dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
             new ServerDis(dataPublic).addChannel(database);
             return;
         }
 
         if(dataPublic.getContent().startsWith("?editchannel")){
+            dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
             new ServerDis(dataPublic).editChannel(database);
             return;
         }
 
         if (dataPublic.getContent().equals("?servers") || dataPublic.getContent().equals("?server")){
+            dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
             new ServerSquad(dataPublic, database).showServersList();
             return;
         }
 
         if (dataPublic.getContent().startsWith("?addserver")){
+            dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
             new ServerSquad(dataPublic, database).addNewServer();
             return;
         }
 
         if(dataPublic.getContent().startsWith("?clean")){
+            dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
             new ServerSquad(dataPublic, database).eraseServerMessages();
             return;
         }
 
         if(dataPublic.getContent().startsWith("?deleteserver")){
+            dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
             new ServerSquad(dataPublic, database).deleteServer();
             return;
         }
 
         if(dataPublic.getContent().startsWith("?access")){
+            dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
             new ServerDis(dataPublic).listRoles(database);
             return;
         }
 
         if(dataPublic.getContent().startsWith("?addrole")){
+            dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
             new ServerDis(dataPublic).addRole(database);
         }
 
         if(dataPublic.getContent().startsWith("?deleterole")){
+            dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
             new ServerDis(dataPublic).deleteRole(database);
         }
 
