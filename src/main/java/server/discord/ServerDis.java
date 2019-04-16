@@ -231,7 +231,7 @@ public class ServerDis {
         String text = "" +
                 "I would like to say thank you to everyone who helped me or gave me advises:" +
                 "**" +
-                "[ProG]Aibo,\nVirus.exe,\n[BORN]Enj0y,\n508|CPL-Gerrit,\n508th|SPC-Llamageddon,\n508th|SGT-Ekberg,\nGatzby." +
+                "[ProG]Aibo,\nVirus.exe,\n[BORN]Enj0y,\n508th|2LT-Zahler,\n508|CPL-Gerrit,\n508th|SPC-Llamageddon,\n508th|SGT-Ekberg,\n508th|2LT-Kadone\nGatzby." +
                 "**";
 
         dataPublic.getChannel().sendMessage(new EmbedMessage().ServerInsertInfo("Credits:", text, defaultColor)).queue(

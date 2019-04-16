@@ -9,7 +9,7 @@ import java.net.URL;
 
 public class BattleMetricsData {
     public ServerInfo getServerInfo(String serverId){
-        System.out.println("Read server id = " + serverId);
+//        System.out.println("Read server id = " + serverId);
         InputStreamReader reader = null;
         try  {
             URL url = null;
@@ -19,7 +19,7 @@ public class BattleMetricsData {
             try {
                 assert url != null;
                 reader = new InputStreamReader(url.openStream());
-                System.out.println("Read successfully!");
+//                System.out.println("Read successfully!");
 //            } catch (IOException ignored) {
             } catch (IOException e) {
                 System.out.println("IO error:");
