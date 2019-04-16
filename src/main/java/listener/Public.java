@@ -31,6 +31,9 @@ public class Public extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
+
+        if(event.getAuthor().isBot()) return;
+
         dataPublic = new DataPublic(event);
 
         if(dataPublic.getContent().equals("?aboutss")){
@@ -50,13 +53,10 @@ public class Public extends ListenerAdapter {
 
         /*
         Only for developer
-         */
+        */
         if(dataPublic.getAuthorId().equals(BotConfig.SPECIAL_ID)){
 
-            /*
-            Close app in case of something anywhere where bot is added to channel
-             */
-
+            //Close app in case of error
             if(dataPublic.getContent().equals("?exitss")){
                 dataPublic.getMessage().delete().queue();
                 dataPublic.getGuild().getJDA().getUserById(BotConfig.SPECIAL_ID).openPrivateChannel().queue(
@@ -68,6 +68,7 @@ public class Public extends ListenerAdapter {
                 );
             }
 
+            //Check how many threads operates now
             if(dataPublic.getContent().startsWith("?tr")){
                 dataPublic.getMessage().delete().queue();
                 // Get the managed bean for the thread system of the Java
@@ -83,6 +84,7 @@ public class Public extends ListenerAdapter {
                 return;
             }
 
+            //info about me
             if(dataPublic.getContent().equals("?info1")){
                 dataPublic.getMessage().delete().queue();
                 for(Role role : dataPublic.getMember().getRoles()){
@@ -90,19 +92,20 @@ public class Public extends ListenerAdapter {
                 }
             }
 
+            //testing Greeting message
+            if(dataPublic.getContent().equals("?greeting")){
+                dataPublic.getMessage().delete().queue();
+                dataPublic.getChannel().sendMessage(new EmbedMessage().GreetingMessage(event)).queue();
+            }
 
-            /*
-            Should add this only for test server!
-             */
+
+            //Should add this only for test server!
             if(dataPublic.getContent().startsWith("?дел "))
                 new TestMethod(dataPublic).deleteMessages();
         }
 
-        if(event.getAuthor().isBot()) return;
 
-
-
-//        For lance
+        //For lance
         if(dataPublic.getContent().equals("?lance")){
             if(event.getMember().getRoles().contains(dataPublic.getGuild().getRoleById(BotConfig.ROLE_ID)) &&
                 (event.getMessage().getCategory().getName().toLowerCase().equals("lance"))){
@@ -111,9 +114,6 @@ public class Public extends ListenerAdapter {
                 );
             }
         }
-
-
-
 
 
         if(!giveAccess(dataPublic)) return;

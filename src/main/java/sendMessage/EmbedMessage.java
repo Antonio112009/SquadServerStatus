@@ -6,6 +6,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.awt.*;
 import java.time.Instant;
@@ -113,12 +114,28 @@ public class EmbedMessage {
 
         return embed;
     }
-//
-//    public void TestColor(DataPublic data) {
-//        String[] array = data.getContent().split(" ");
-//        data.getChannel().sendMessage(ServerInsertInfo("TEST", new Color(Integer.parseInt(array[1]),Integer.parseInt(array[2]),Integer.parseInt(array[3]))).build()).queue();
-//    }
+
 
 
     //TODO: Greeting message
+    public MessageEmbed GreetingMessage(GuildJoinEvent event){
+        embed.setColor(defaultColor);
+        embed.setAuthor(event.getJDA().getSelfUser().getName(), null,event.getJDA().getSelfUser().getAvatarUrl());
+        embed.setTitle("Thank you for adding me!");
+        embed.setDescription("To get started you can view the bot guide via `?guide`");
+        embed.addField("Bot guide", "`?guide`", true);
+        embed.addField("List of commands", "`?helpSS`", true);
+        embed.addField("See info about me and credits:", "`?aboutSS`\n`?credit`",true);
+        return embed.build();
+    }
+
+    public MessageEmbed GreetingMessage(MessageReceivedEvent event) {
+        embed.setColor(defaultColor);
+        embed.setAuthor("Thank you for adding me!", null, event.getJDA().getSelfUser().getEffectiveAvatarUrl());
+        embed.setDescription("To get started you can view the bot guide via `?guide`");
+        embed.addField("Bot guide", "`?guide`", true);
+        embed.addField("List of commands", "`?helpSS`", true);
+        embed.addField("See info about me and credits:", "`?aboutSS` and `?creditss`",true);
+        return embed.build();
+    }
 }

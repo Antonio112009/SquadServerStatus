@@ -1,11 +1,17 @@
 package listener;
 
 import config.BotConfig;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import sendMessage.EmbedMessage;
 
+import java.awt.*;
+
 public class BotOperations extends ListenerAdapter {
+
+
+    private Color defaultColor = new Color(249, 29, 84);
 
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
@@ -15,6 +21,12 @@ public class BotOperations extends ListenerAdapter {
                     channel.sendMessage(new EmbedMessage().onJoinDiscordServer(event).build()).queue()
         );
 
-//        event.getGuild().getDefaultChannel().sendMessage()
+        TextChannel defChannel = event.getGuild().getDefaultChannel();
+
+        if(defChannel != null){
+            defChannel.sendMessage(new EmbedMessage().GreetingMessage(event)).queue();
+        } else {
+//            event.getGuild().
+        }
     }
 }
