@@ -6,12 +6,7 @@ import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import sendMessage.EmbedMessage;
 
-import java.awt.*;
-
 public class BotOperations extends ListenerAdapter {
-
-
-    private Color defaultColor = new Color(249, 29, 84);
 
     @Override
     public void onGuildJoin(GuildJoinEvent event) {

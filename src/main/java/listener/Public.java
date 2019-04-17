@@ -26,7 +26,7 @@ public class Public extends ListenerAdapter {
 
     private DataPublic dataPublic;
 
-    private long seconds = 20;
+    private long seconds = 120;
 
 
     @Override
