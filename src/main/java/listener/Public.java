@@ -102,6 +102,9 @@ public class Public extends ListenerAdapter {
             //Should add this only for test server!
             if(dataPublic.getContent().startsWith("?дел "))
                 new TestMethod(dataPublic).deleteMessages();
+
+            if(dataPublic.getContent().equals("?invite"))
+                new TestMethod(dataPublic).invite();
         }
 
 
@@ -186,7 +189,6 @@ public class Public extends ListenerAdapter {
             dataPublic.getMessage().delete().queueAfter(seconds,TimeUnit.SECONDS);
             new ServerDis(dataPublic, seconds).deleteRole(database);
         }
-
     }
 
 

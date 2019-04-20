@@ -17,6 +17,15 @@ public class EmbedMessage {
     private EmbedBuilder embed = new EmbedBuilder();
     private Color defaultColor = new Color(249, 29, 84);
 
+    public MessageEmbed OfflineDeadServer(List<String> serverInfo){
+        embed.setColor(new Color(17, 0, 3));
+        embed.setAuthor(serverInfo.get(0));
+        embed.setDescription("Server status: **" + serverInfo.get(3) + "**\n" +
+                "Server id: **" + serverInfo.get(8) + "**");
+        embed.setTimestamp(Instant.now());
+        return embed.build();
+    }
+
     public EmbedBuilder ServerInfoTemplate(List<String> serverInfo){
         if(serverInfo.get(2).equals("0")){
             embed.setColor(new Color(255,255,255));
@@ -27,7 +36,7 @@ public class EmbedMessage {
             if(0 <= percent && percent < 12){
                 embed.setColor(new Color(204, 204, 204));
             } else if(12 <= percent && percent < 50){
-                embed.setColor(new Color(170, 255, 253));
+                embed.setColor(new Color(201, 255, 122));
             } else if(50 <= percent && percent <= 70){
                 embed.setColor(new Color(63, 255, 0));
             } else if(70 <= percent && percent <= 80){

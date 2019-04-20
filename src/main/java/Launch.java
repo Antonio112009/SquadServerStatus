@@ -23,7 +23,9 @@ public class Launch {
                     .build();
             api.addEventListener(new Public());
             api.addEventListener(new BotOperations());
+            api.awaitReady();
             new Threads(api).start();
+            System.out.println("Bot finished loading");
 
         } catch (Exception e){
             e.printStackTrace();

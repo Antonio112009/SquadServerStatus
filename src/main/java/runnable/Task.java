@@ -1,6 +1,7 @@
 package runnable;
 
 import database.Database;
+import entities.ServerInfo;
 import entities.SignedServer;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Game;
@@ -26,12 +27,21 @@ public class Task {
                     () -> {
                         if(server.getMessage_id() != 0){
                             try{
+                                ServerInfo serverInfo = new BattleMetricsData().getServerInfo(String.valueOf(server.getServer_id()));
 //                                System.out.println("guild = " + server.getGuild_id() + " channel_id = " + server.getChannel_id() + " Message = " +server.getMessage_id());
-                                api.getGuildById(server.getGuild_id())
-                                        .getTextChannelById(server.getChannel_id())
-                                        .editMessageById(
-                                                server.getMessage_id(),
-                                                new EmbedMessage().ServerInfoTemplate(new BattleMetricsData().getServerInfo(String.valueOf(server.getServer_id())).getList()).build()).queue();
+                                if(serverInfo.getStatus().equals("online")) {
+                                    api.getGuildById(server.getGuild_id())
+                                            .getTextChannelById(server.getChannel_id())
+                                            .editMessageById(
+                                                    server.getMessage_id(),
+                                                    new EmbedMessage().ServerInfoTemplate(serverInfo.getList()).build()).queue();
+                                } else {
+                                    api.getGuildById(server.getGuild_id())
+                                            .getTextChannelById(server.getChannel_id())
+                                            .editMessageById(
+                                                    server.getMessage_id(),
+                                                    new EmbedMessage().OfflineDeadServer(serverInfo.getList())).queue();
+                                }
                             } catch (Exception e){
                                 e.printStackTrace();
                             }

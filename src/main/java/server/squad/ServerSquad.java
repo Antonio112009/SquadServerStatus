@@ -65,7 +65,11 @@ public class ServerSquad {
                                         ServerInfo finalServerInfo1 = serverInfo;
                                         dataPublic.getGuild().getTextChannelById(channel_id).sendMessage(new EmbedMessage().EmptyEmbed().build()).queue(
                                                 (e) ->{
-                                                    dataPublic.getGuild().getTextChannelById(channel_id).editMessageById(e.getId(), new EmbedMessage().ServerInfoTemplate(finalServerInfo1.getList()).build()).queue();
+                                                    if(finalServerInfo1.getStatus().equals("online")) {
+                                                        dataPublic.getGuild().getTextChannelById(channel_id).editMessageById(e.getId(), new EmbedMessage().ServerInfoTemplate(finalServerInfo1.getList()).build()).queue();
+                                                    } else {
+                                                        dataPublic.getGuild().getTextChannelById(channel_id).editMessageById(e.getId(), new EmbedMessage().OfflineDeadServer(finalServerInfo1.getList())).queue();
+                                                    }
                                                     new Database().updateMessageServer(dataPublic.getGuild().getIdLong(),Long.parseLong(finalServerInfo.getServerId()), e.getIdLong());
                                                 });
                                     } else {
@@ -104,7 +108,11 @@ public class ServerSquad {
              ServerInfo serverInfo = new BattleMetricsData().getServerInfo(String.valueOf(server_id.getServer_id()));
             dataPublic.getGuild().getTextChannelById(channel_id).sendMessage(new EmbedMessage().EmptyEmbed().build()).queue(
                     (e) ->{
-                        dataPublic.getGuild().getTextChannelById(channel_id).editMessageById(e.getId(), new EmbedMessage().ServerInfoTemplate(serverInfo.getList()).build()).queue();
+                        if(serverInfo.getStatus().equals("online")) {
+                            dataPublic.getGuild().getTextChannelById(channel_id).editMessageById(e.getId(), new EmbedMessage().ServerInfoTemplate(serverInfo.getList()).build()).queue();
+                        } else {
+                            dataPublic.getGuild().getTextChannelById(channel_id).editMessageById(e.getId(), new EmbedMessage().OfflineDeadServer(serverInfo.getList())).queue();
+                        }
                         new Database().updateMessageServer(dataPublic.getGuild().getIdLong(),Long.parseLong(serverInfo.getServerId()), e.getIdLong());
                     });
         }
